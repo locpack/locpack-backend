@@ -5,8 +5,8 @@ import "placelists/internal/app/api/dtos"
 type UserService struct {
 }
 
-func NewUserService() *UserService {
-	return &UserService{}
+func NewUserService() UserService {
+	return UserService{}
 }
 
 func (s *UserService) GetUserByUsername(username string) (*dtos.User, error) {

@@ -5,8 +5,8 @@ import "placelists/internal/app/api/dtos"
 type PlacelistService struct {
 }
 
-func NewPlacelistService() *PlacelistService {
-	return &PlacelistService{}
+func NewPlacelistService() PlacelistService {
+	return PlacelistService{}
 }
 
 func (s *PlacelistService) GetPlacelistsByNameOrAuthor(query string) (*[]dtos.Placelist, error) {

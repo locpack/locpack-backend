@@ -2,7 +2,7 @@ package main
 
 import (
 	apiV1 "placelists/internal/app/api/v1"
-	"placelists/internal/services"
+	"placelists/internal/core/services"
 
 	"github.com/gin-gonic/gin"
 )
