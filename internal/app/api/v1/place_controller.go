@@ -17,13 +17,11 @@ func NewPlaceController(ps services.PlaceService) *PlaceController {
 }
 
 func (pc *PlaceController) RegisterRoutes(r *gin.RouterGroup) {
-	places := r.Group("/places")
-	{
-		places.GET("/", pc.getPlacesByQuery)
-		places.POST("/", pc.postPlace)
-		places.GET("/:id", pc.getPlaceByID)
-		places.PUT("/:id", pc.putPlaceByID)
-	}
+	g := r.Group("/places")
+	g.GET("/", pc.getPlacesByQuery)
+	g.POST("/", pc.postPlace)
+	g.GET("/:id", pc.getPlaceByID)
+	g.PUT("/:id", pc.putPlaceByID)
 }
 
 func (pc *PlaceController) getPlacesByQuery(c *gin.Context) {

@@ -17,12 +17,10 @@ func NewUserController(us services.UserService) *UserController {
 }
 
 func (uc *UserController) RegisterRoutes(r *gin.RouterGroup) {
-	users := r.Group("/users")
-	{
-		users.GET("/my", uc.getUserMy)
-		users.GET("/:username", uc.getUserByUsername)
-		users.PUT("/:username", uc.putUserByUsername)
-	}
+	g := r.Group("/users")
+	g.GET("/my", uc.getUserMy)
+	g.GET("/:username", uc.getUserByUsername)
+	g.PUT("/:username", uc.putUserByUsername)
 }
 
 func (uc *UserController) getUserMy(c *gin.Context) {

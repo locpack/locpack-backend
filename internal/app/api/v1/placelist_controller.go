@@ -17,18 +17,16 @@ func NewPlacelistController(ps services.PlacelistService) *PlacelistController {
 }
 
 func (pc *PlacelistController) RegisterRoutes(r *gin.RouterGroup) {
-	placelists := r.Group("/placelists")
-	{
-		placelists.GET("/", pc.getPlacelistsByQuery)
-		placelists.POST("/", pc.postPlacelist)
-		placelists.GET("/followed", pc.getPlacelistsFollowed)
-		placelists.GET("/created", pc.getPlacelistsCreated)
-		placelists.GET("/:id", pc.getPlacelistByID)
-		placelists.PUT("/:id", pc.putPlacelistByID)
-		placelists.DELETE("/:id", pc.deletePlacelistByID)
-		placelists.GET("/:id/places", pc.getPlacelistPlacesByID)
-		placelists.PUT("/:id/places", pc.putPlacelistPlacesByID)
-	}
+	g := r.Group("/placelists")
+	g.GET("/", pc.getPlacelistsByQuery)
+	g.POST("/", pc.postPlacelist)
+	g.GET("/followed", pc.getPlacelistsFollowed)
+	g.GET("/created", pc.getPlacelistsCreated)
+	g.GET("/:id", pc.getPlacelistByID)
+	g.PUT("/:id", pc.putPlacelistByID)
+	g.DELETE("/:id", pc.deletePlacelistByID)
+	g.GET("/:id/places", pc.getPlacelistPlacesByID)
+	g.PUT("/:id/places", pc.putPlacelistPlacesByID)
 }
 
 func (pc *PlacelistController) getPlacelistsByQuery(c *gin.Context) {
