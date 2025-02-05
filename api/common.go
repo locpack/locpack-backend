@@ -1,7 +1,7 @@
 package api
 
 import (
-	"placelists/internal/app/api/dtos"
+	"placelists/api/dtos"
 
 	"github.com/gin-gonic/gin"
 )

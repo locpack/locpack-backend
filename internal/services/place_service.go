@@ -1,6 +1,6 @@
 package services
 
-import "placelists/internal/app/api/dtos"
+import "placelists/api/dtos"
 
 type PlaceService struct {
 }

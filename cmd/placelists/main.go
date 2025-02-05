@@ -1,8 +1,8 @@
 package main
 
 import (
-	apiV1 "placelists/internal/app/api/v1"
-	"placelists/internal/core/services"
+	v1 "placelists/api/v1"
+	"placelists/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
@@ -14,9 +14,9 @@ func main() {
 	placelistService := services.NewPlacelistService()
 	userService := services.NewUserService()
 
-	placeController := apiV1.NewPlaceController(placeService)
-	placelistController := apiV1.NewPlacelistController(placelistService)
-	userController := apiV1.NewUserController(userService)
+	placeController := v1.NewPlaceController(placeService)
+	placelistController := v1.NewPlacelistController(placelistService)
+	userController := v1.NewUserController(userService)
 
 	apiV1 := r.Group("/api/v1")
 

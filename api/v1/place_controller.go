@@ -1,9 +1,9 @@
-package apiV1
+package v1
 
 import (
-	"placelists/internal/app/api"
-	"placelists/internal/app/api/dtos"
-	"placelists/internal/core/services"
+	"placelists/api"
+	"placelists/api/dtos"
+	"placelists/internal/services"
 
 	"github.com/gin-gonic/gin"
 )
