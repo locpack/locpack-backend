@@ -16,7 +16,17 @@ func NewPlaceController(ps services.PlaceService) *PlaceController {
 	return &PlaceController{placeService: ps}
 }
 
-func (pc *PlaceController) GetPlacesByQuery(c *gin.Context) {
+func (pc *PlaceController) RegisterRoutes(r *gin.RouterGroup) {
+	places := r.Group("/places")
+	{
+		places.GET("/", pc.getPlacesByQuery)
+		places.POST("/", pc.postPlace)
+		places.GET("/:id", pc.getPlaceByID)
+		places.PUT("/:id", pc.putPlaceByID)
+	}
+}
+
+func (pc *PlaceController) getPlacesByQuery(c *gin.Context) {
 	query := c.Query("query")
 	if len(query) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
@@ -34,7 +44,7 @@ func (pc *PlaceController) GetPlacesByQuery(c *gin.Context) {
 	api.Response(c, 200, places, []dtos.Error{})
 }
 
-func (pc *PlaceController) GetPlaceByID(c *gin.Context) {
+func (pc *PlaceController) getPlaceByID(c *gin.Context) {
 	id := c.Param("id")
 	if len(id) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
@@ -52,7 +62,7 @@ func (pc *PlaceController) GetPlaceByID(c *gin.Context) {
 	api.Response(c, 200, place, []dtos.Error{})
 }
 
-func (pc *PlaceController) PostPlace(c *gin.Context) {
+func (pc *PlaceController) postPlace(c *gin.Context) {
 	var placeCreate dtos.PlaceCreate
 	err := c.ShouldBindJSON(&placeCreate)
 	if err != nil {
@@ -71,7 +81,7 @@ func (pc *PlaceController) PostPlace(c *gin.Context) {
 	api.Response(c, 200, place, []dtos.Error{})
 }
 
-func (pc *PlaceController) PutPlaceByID(c *gin.Context) {
+func (pc *PlaceController) putPlaceByID(c *gin.Context) {
 	id := c.Param("id")
 	if len(id) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}

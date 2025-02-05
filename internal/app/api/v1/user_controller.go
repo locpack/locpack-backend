@@ -16,7 +16,16 @@ func NewUserController(us services.UserService) *UserController {
 	return &UserController{userService: us}
 }
 
-func (uc *UserController) GetUserMy(c *gin.Context) {
+func (uc *UserController) RegisterRoutes(r *gin.RouterGroup) {
+	users := r.Group("/users")
+	{
+		users.GET("/my", uc.getUserMy)
+		users.GET("/:username", uc.getUserByUsername)
+		users.PUT("/:username", uc.putUserByUsername)
+	}
+}
+
+func (uc *UserController) getUserMy(c *gin.Context) {
 	username := c.GetString("username")
 	if len(username) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
@@ -34,7 +43,7 @@ func (uc *UserController) GetUserMy(c *gin.Context) {
 	api.Response(c, 200, user, []dtos.Error{})
 }
 
-func (uc *UserController) GetUserByUsername(c *gin.Context) {
+func (uc *UserController) getUserByUsername(c *gin.Context) {
 	username := c.Param("username")
 
 	user, err := uc.userService.GetUserByUsername(username)
@@ -47,7 +56,7 @@ func (uc *UserController) GetUserByUsername(c *gin.Context) {
 	api.Response(c, 200, user, []dtos.Error{})
 }
 
-func (uc *UserController) PutUserByUsername(c *gin.Context) {
+func (uc *UserController) putUserByUsername(c *gin.Context) {
 	username := c.Param("username")
 
 	var userUpdate dtos.UserUpdate
