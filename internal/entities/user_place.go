@@ -1,9 +1,16 @@
 package entities
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
 
 type UserPlace struct {
-	Entity
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid"`
+	CreatedAt time.Time `gorm:"not null"`
+	UpdatedAt time.Time `gorm:"not null"`
+	DeletedAt time.Time `gorm:"index;default:null"`
 
 	Visited bool `gorm:"not null"`
 

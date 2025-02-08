@@ -1,9 +1,23 @@
 package entities
 
-import "github.com/google/uuid"
+import (
+	"time"
+
+	"github.com/google/uuid"
+)
+
+type PlacelistStatus = string
+
+const (
+	Created  PlacelistStatus = "CREATED"
+	Followed PlacelistStatus = "FOLLOWED"
+)
 
 type UserPlacelist struct {
-	Entity
+	ID        uuid.UUID `gorm:"primaryKey;type:uuid"`
+	CreatedAt time.Time `gorm:"not null"`
+	UpdatedAt time.Time `gorm:"not null"`
+	DeletedAt time.Time `gorm:"index;default:null"`
 
 	Status PlacelistStatus `gorm:"not null"`
 
