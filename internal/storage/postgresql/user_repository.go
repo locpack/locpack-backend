@@ -1,16 +1,15 @@
-package postgresql
+package repositories
 
 import (
 	"placelists/internal/entities"
-
-	"gorm.io/gorm"
+	"placelists/internal/storage/database"
 )
 
 type userRepositoryImpl struct {
-	db *gorm.DB
+	db *database.DB
 }
 
-func NewUserRepository(db *gorm.DB) *userRepositoryImpl {
+func NewUserRepository(db *database.DB) *userRepositoryImpl {
 	return &userRepositoryImpl{db}
 }
 
