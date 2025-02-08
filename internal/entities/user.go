@@ -1,20 +1,10 @@
 package entities
 
 type User struct {
-	ID       ID     `json:"id"`
-	Username string `json:"username"`
-}
+	PublicEntity
 
-type UserPlacelist struct {
-	ID          ID              `json:"id"`
-	Status      PlacelistStatus `json:"status"`
-	UserID      ID              `json:"user_id"`
-	PlacelistID ID              `json:"placelist_id"`
-}
+	Username string `gorm:"unique;not null"`
 
-type UserCreatedPlace struct {
-	ID      ID   `json:"id"`
-	Visited bool `json:"visited"`
-	UserID  ID   `json:"user_id"`
-	PlaceID ID   `json:"place_id"`
+	Placelists *[]UserPlacelist
+	Places     *[]UserPlace
 }
