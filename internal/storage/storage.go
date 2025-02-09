@@ -1,0 +1,36 @@
+package storage
+
+import "placelists/internal/entities"
+
+// import "placelists/internal/entities"
+
+type Repository struct {
+	// Place     PlaceRepository
+	// Placelist PlacelistRepository
+	User UserRepository
+}
+
+// type PlaceRepository interface {
+// 	GetByID(id entities.ID) (*entities.Place, error)
+// 	GetByNameOrAddress(query string) (*[]entities.Place, error)
+// 	Create(p *entities.Place) (*entities.Place, error)
+// 	Update(p *entities.Place) (*entities.Place, error)
+// }
+
+// type PlacelistRepository interface {
+// 	GetByID(id entities.ID) (*entities.Placelist, error)
+// 	GetByNameOrAuthor(query string) (*[]entities.Placelist, error)
+// 	GetFollowedByUsername(username string) (*[]entities.Placelist, error)
+// 	GetCreatedByUsername(username string) (*[]entities.Placelist, error)
+// 	Create(p *entities.Placelist) (*entities.Placelist, error)
+// 	Update(p *entities.Placelist) (*entities.Placelist, error)
+// 	Delete(p *entities.Placelist) (*entities.Placelist, error)
+// 	// GetPlacelistPlacesByID
+// 	// UpdatePlacelistPlacesByID
+// }
+
+type UserRepository interface {
+	GetByUsername(username string) (*entities.User, error)
+	Create(p *entities.User) error
+	Update(p *entities.User) error
+}
