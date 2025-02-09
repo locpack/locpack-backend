@@ -19,7 +19,10 @@ func (s *userService) GetByPublicID(publicID string) (*models.User, error) {
 		return nil, err
 	}
 
-	foundUser := &models.User{ID: u.PublicID, Username: u.Username}
+	foundUser := &models.User{
+		ID:       u.PublicID,
+		Username: u.Username,
+	}
 
 	return foundUser, nil
 }

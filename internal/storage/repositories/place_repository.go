@@ -15,15 +15,19 @@ func NewPlaceRepository(db *database.DB) *placeRepositoryImpl {
 	return &placeRepositoryImpl{db}
 }
 
-func (r *placeRepositoryImpl) GetByID(id uuid.UUID) (*entities.Place, error) {
+func (r *placeRepositoryImpl) GetByPublicIDWithUser(publicID string, userID uuid.UUID) (*entities.Place, error) {
 	var p *entities.Place
-	result := r.db.First(&p, "id = ? AND deleted_at IS NULL", id)
+	result := r.db.
+		Preload("Users", "user_id = ?", userID).
+		First(&p, "public_id = ?", publicID)
 	return p, result.Error
 }
 
-func (r *placeRepositoryImpl) GetByNameOrAddress(query string) (*[]entities.Place, error) {
+func (r *placeRepositoryImpl) GetByNameOrAddressWithUser(query string, userID uuid.UUID) (*[]entities.Place, error) {
 	var p *[]entities.Place
-	result := r.db.Find(&p, "(name = ? OR address = ?) AND deleted_at IS NULL", query, query)
+	result := r.db.
+		Preload("Users", "user_id = ?", userID).
+		Find(&p, "lower(name) LIKE lower(?) OR lower(address) LIKE lower(?)", "%"+query+"%", "%"+query+"%")
 	return p, result.Error
 }
 
@@ -33,6 +37,19 @@ func (r *placeRepositoryImpl) Create(p *entities.Place) error {
 }
 
 func (r *placeRepositoryImpl) Update(p *entities.Place) error {
-	result := r.db.Save(&p)
-	return result.Error
+	return r.db.Transaction(func(tx *database.Tx) error {
+		placeSaveResult := tx.DB().Save(&p)
+		if placeSaveResult.Error != nil {
+			return placeSaveResult.Error
+		}
+
+		if len(p.Users) > 0 {
+			userPlaceSaveResult := tx.DB().Save(&p.Users[0])
+			if userPlaceSaveResult.Error != nil {
+				return userPlaceSaveResult.Error
+			}
+		}
+
+		return nil
+	})
 }

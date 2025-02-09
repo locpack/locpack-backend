@@ -5,10 +5,10 @@ import (
 	"placelists/internal/storage"
 )
 
-func NewService(r *storage.Repository) *service.Service {
+func NewService(repository *storage.Repository) *service.Service {
 	return &service.Service{
-		// Place:     NewPlaceService(r.Place),
+		Place: NewPlaceService(repository.Place, repository.User),
 		// Placelist: NewPlacelistService(r.Placelist),
-		User: NewUserService(r.User),
+		User: NewUserService(repository.User),
 	}
 }

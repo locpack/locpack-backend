@@ -10,6 +10,7 @@ type Place struct {
 type PlaceCreate struct {
 	Name    string
 	Address string
+	Visited bool
 }
 
 type PlaceUpdate struct {

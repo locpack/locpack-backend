@@ -7,8 +7,8 @@ import (
 
 func NewRepository(db *database.DB) *storage.Repository {
 	return &storage.Repository{
-		Place: NewPlaceRepository(db),
+		Place:     NewPlaceRepository(db),
 		Placelist: NewPlacelistRepository(db),
-		User: NewUserRepository(db),
+		User:      NewUserRepository(db),
 	}
 }
