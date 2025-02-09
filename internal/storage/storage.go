@@ -7,9 +7,9 @@ import (
 )
 
 type Repository struct {
-	Place PlaceRepository
-	// Placelist PlacelistRepository
-	User UserRepository
+	Place     PlaceRepository
+	Placelist PlacelistRepository
+	User      UserRepository
 }
 
 type PlaceRepository interface {
@@ -19,17 +19,17 @@ type PlaceRepository interface {
 	Update(p *entities.Place) error
 }
 
-// type PlacelistRepository interface {
-// 	GetByID(id entities.ID) (*entities.Placelist, error)
-// 	GetByNameOrAuthor(query string) (*[]entities.Placelist, error)
-// 	GetFollowedByUsername(username string) (*[]entities.Placelist, error)
-// 	GetCreatedByUsername(username string) (*[]entities.Placelist, error)
-// 	Create(p *entities.Placelist) (*entities.Placelist, error)
-// 	Update(p *entities.Placelist) (*entities.Placelist, error)
-// 	Delete(p *entities.Placelist) (*entities.Placelist, error)
-// 	// GetPlacelistPlacesByID
-// 	// UpdatePlacelistPlacesByID
-// }
+type PlacelistRepository interface {
+	GetByID(id uuid.UUID) (*entities.Placelist, error)
+	// GetByNameOrAuthor(query string) (*[]entities.Placelist, error)
+	// GetFollowedByUsername(username string) (*[]entities.Placelist, error)
+	// GetCreatedByUsername(username string) (*[]entities.Placelist, error)
+	Create(p *entities.Placelist) error
+	Update(p *entities.Placelist) error
+	Delete(p *entities.Placelist) error
+	// GetPlacelistPlacesByID
+	// UpdatePlacelistPlacesByID
+}
 
 type UserRepository interface {
 	GetByUsername(username string) (*entities.User, error)
