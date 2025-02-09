@@ -24,6 +24,7 @@ func New(p Provider, dsn string) *DB {
 		PostgreSQLProvider: postgres.Open,
 		SQLiteProvider:     sqlite.Open,
 	}
+
 	db, _ := gorm.Open(providers[p](dsn), &gorm.Config{})
 
 	db.AutoMigrate(
