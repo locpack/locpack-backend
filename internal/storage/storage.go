@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"placelists/internal/entities"
+	"placelists/internal/storage/entities"
 
 	"github.com/google/uuid"
 )

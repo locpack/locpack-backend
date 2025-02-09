@@ -1,7 +1,7 @@
 package database
 
 import (
-	"placelists/internal/entities"
+	"placelists/internal/storage/entities"
 
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"

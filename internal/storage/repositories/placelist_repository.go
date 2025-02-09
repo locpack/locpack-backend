@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"placelists/internal/entities"
 	"placelists/internal/storage/database"
+	"placelists/internal/storage/entities"
 	"time"
 
 	"github.com/google/uuid"
