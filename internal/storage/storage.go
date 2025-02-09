@@ -32,7 +32,7 @@ type PlacelistRepository interface {
 }
 
 type UserRepository interface {
-	GetByUsername(username string) (*entities.User, error)
+	GetByPublicID(publicID string) (*entities.User, error)
 	Create(p *entities.User) error
 	Update(p *entities.User) error
 }

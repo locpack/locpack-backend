@@ -13,9 +13,9 @@ func NewUserRepository(db *database.DB) *userRepositoryImpl {
 	return &userRepositoryImpl{db}
 }
 
-func (r *userRepositoryImpl) GetByUsername(username string) (*entities.User, error) {
+func (r *userRepositoryImpl) GetByPublicID(publicID string) (*entities.User, error) {
 	var u *entities.User
-	result := r.db.First(&u, "username = ? AND deleted_at IS NULL", username)
+	result := r.db.First(&u, "public_id = ? AND deleted_at IS NULL", publicID)
 	return u, result.Error
 }
 

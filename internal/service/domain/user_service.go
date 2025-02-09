@@ -6,15 +6,15 @@ import (
 )
 
 type userService struct {
-	r storage.UserRepository
+	repository storage.UserRepository
 }
 
-func NewUserService(r storage.UserRepository) *userService {
-	return &userService{r: r}
+func NewUserService(repository storage.UserRepository) *userService {
+	return &userService{repository}
 }
 
-func (s *userService) GetByUsername(username string) (*models.User, error) {
-	u, err := s.r.GetByUsername(username)
+func (s *userService) GetByPublicID(publicID string) (*models.User, error) {
+	u, err := s.repository.GetByPublicID(publicID)
 	if err != nil {
 		return nil, err
 	}
@@ -24,8 +24,8 @@ func (s *userService) GetByUsername(username string) (*models.User, error) {
 	return foundUser, nil
 }
 
-func (s *userService) UpdateByUsername(username string, uu *models.UserUpdate) error {
-	u, err := s.r.GetByUsername(username)
+func (s *userService) UpdateByPublicID(publicID string, uu *models.UserUpdate) error {
+	u, err := s.repository.GetByPublicID(publicID)
 	if err != nil {
 		return err
 	}
@@ -33,7 +33,7 @@ func (s *userService) UpdateByUsername(username string, uu *models.UserUpdate) e
 	u.Username = uu.Username
 	u.PublicID = uu.Username
 
-	err = s.r.Update(u)
+	err = s.repository.Update(u)
 
 	return err
 }
