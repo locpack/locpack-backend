@@ -3,7 +3,6 @@ package repositories
 import (
 	"placelists/internal/storage/database"
 	"placelists/internal/storage/entities"
-	"time"
 
 	"github.com/google/uuid"
 )
@@ -16,9 +15,17 @@ func NewPlacelistRepository(db *database.DB) *placelistRepositoryImpl {
 	return &placelistRepositoryImpl{db}
 }
 
-func (r *placelistRepositoryImpl) GetByID(id uuid.UUID) (*entities.Placelist, error) {
+func (r *placelistRepositoryImpl) GetByPublicID(publicID string) (*entities.Placelist, error) {
 	var p *entities.Placelist
-	result := r.db.First(&p, "id = ? AND deleted IS NULL", id)
+	result := r.db.First(&p, "public_id = ?", publicID)
+	return p, result.Error
+}
+
+func (r *placelistRepositoryImpl) GetByNameOrAuthorWithUser(query string, userID uuid.UUID) (*[]entities.Placelist, error) {
+	var p *[]entities.Placelist
+	result := r.db.
+		Preload("Users", "user_id = ?", userID).
+		Find(&p, "lower(name) LIKE lower(?)", "%"+query+"%")
 	return p, result.Error
 }
 
@@ -29,17 +36,5 @@ func (r *placelistRepositoryImpl) Create(p *entities.Placelist) error {
 
 func (r *placelistRepositoryImpl) Update(p *entities.Placelist) error {
 	result := r.db.Save(&p)
-	return result.Error
-}
-
-func (r *placelistRepositoryImpl) Delete(p *entities.Placelist) error {
-	result := r.db.First(&p)
-	if result.Error != nil {
-		return result.Error
-	}
-
-	p.DeletedAt = time.Now()
-
-	result = r.db.Save(&p)
 	return result.Error
 }

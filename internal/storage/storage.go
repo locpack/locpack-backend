@@ -20,13 +20,12 @@ type PlaceRepository interface {
 }
 
 type PlacelistRepository interface {
-	GetByID(id uuid.UUID) (*entities.Placelist, error)
-	// GetByNameOrAuthor(query string) (*[]entities.Placelist, error)
+	GetByPublicID(publicID string) (*entities.Placelist, error)
+	GetByNameOrAuthorWithUser(query string, userID uuid.UUID) (*[]entities.Placelist, error)
 	// GetFollowedByUsername(username string) (*[]entities.Placelist, error)
 	// GetCreatedByUsername(username string) (*[]entities.Placelist, error)
 	Create(p *entities.Placelist) error
 	Update(p *entities.Placelist) error
-	Delete(p *entities.Placelist) error
 	// GetPlacelistPlacesByID
 	// UpdatePlacelistPlacesByID
 }

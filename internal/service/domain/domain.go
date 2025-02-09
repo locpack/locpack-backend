@@ -7,8 +7,8 @@ import (
 
 func NewService(repository *storage.Repository) *service.Service {
 	return &service.Service{
-		Place: NewPlaceService(repository.Place, repository.User),
-		// Placelist: NewPlacelistService(r.Placelist),
-		User: NewUserService(repository.User),
+		Place:     NewPlaceService(repository.Place, repository.User),
+		Placelist: NewPlacelistService(repository.Placelist, repository.User),
+		User:      NewUserService(repository.User),
 	}
 }

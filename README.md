@@ -97,3 +97,5 @@ golang-hexagon-example/
 ├── go.mod
 ├── makefile
 └── README.md
+
+https://medium.com/@shershnev/layered-architecture-implementation-in-golang-6318a72c1e10

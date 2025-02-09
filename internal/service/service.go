@@ -3,9 +3,9 @@ package service
 import "placelists/internal/service/models"
 
 type Service struct {
-	Place PlaceService
-	// Placelist PlacelistService
-	User UserService
+	Place     PlaceService
+	Placelist PlacelistService
+	User      UserService
 }
 
 type PlaceService interface {
@@ -15,8 +15,10 @@ type PlaceService interface {
 	UpdateByPublicIDWithUser(publicID string, userPublicID string, pu *models.PlaceUpdate) error
 }
 
-// type PlacelistService interface {
-// }
+type PlacelistService interface {
+	GetByNameOrUsernameWithUser(query string, userPublicID string) (*[]models.Placelist, error)
+	Create(userPublicID string, pc *models.PlacelistCreate) error
+}
 
 type UserService interface {
 	GetByPublicID(publicID string) (*models.User, error)
