@@ -37,14 +37,14 @@ func (r *placeRepositoryImpl) Create(p *entities.Place) error {
 }
 
 func (r *placeRepositoryImpl) Update(p *entities.Place) error {
-	return r.db.Transaction(func(tx *database.Tx) error {
-		placeSaveResult := tx.DB().Save(&p)
+	return r.db.Transaction(func(tx *database.DB) error {
+		placeSaveResult := tx.Save(&p)
 		if placeSaveResult.Error != nil {
 			return placeSaveResult.Error
 		}
 
 		if len(p.Users) > 0 {
-			userPlaceSaveResult := tx.DB().Save(&p.Users[0])
+			userPlaceSaveResult := tx.Save(&p.Users[0])
 			if userPlaceSaveResult.Error != nil {
 				return userPlaceSaveResult.Error
 			}
