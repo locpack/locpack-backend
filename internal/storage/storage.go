@@ -1,21 +1,23 @@
 package storage
 
-import "placelists/internal/entities"
+import (
+	"placelists/internal/entities"
 
-// import "placelists/internal/entities"
+	"github.com/google/uuid"
+)
 
 type Repository struct {
-	// Place     PlaceRepository
+	Place PlaceRepository
 	// Placelist PlacelistRepository
 	User UserRepository
 }
 
-// type PlaceRepository interface {
-// 	GetByID(id entities.ID) (*entities.Place, error)
-// 	GetByNameOrAddress(query string) (*[]entities.Place, error)
-// 	Create(p *entities.Place) (*entities.Place, error)
-// 	Update(p *entities.Place) (*entities.Place, error)
-// }
+type PlaceRepository interface {
+	GetByID(id uuid.UUID) (*entities.Place, error)
+	GetByNameOrAddress(query string) (*[]entities.Place, error)
+	Create(p *entities.Place) error
+	Update(p *entities.Place) error
+}
 
 // type PlacelistRepository interface {
 // 	GetByID(id entities.ID) (*entities.Placelist, error)
