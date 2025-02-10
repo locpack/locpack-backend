@@ -14,6 +14,9 @@ type Placelist struct {
 	PublicID string `gorm:"unique;not null"`
 	Name     string `gorm:"not null"`
 
-	Places []PlacelistPlace
-	Users  []UserPlacelist
+	AuthorID uuid.UUID `gorm:"type:uuid;not null"`
+	Author   User      `gorm:"foreignKey:AuthorID"`
+
+	Places        []Place `gorm:"many2many:placelist_places"`
+	FollowedUsers []User  `gorm:"many2many:placelist_followed_users"`
 }

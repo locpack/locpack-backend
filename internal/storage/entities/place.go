@@ -15,6 +15,8 @@ type Place struct {
 	Name     string `gorm:"not null"`
 	Address  string `gorm:"not null"`
 
-	Placelists []PlacelistPlace
-	Users      []UserPlace
+	AuthorID uuid.UUID `gorm:"type:uuid;not null"`
+	Author   User      `gorm:"foreignKey:AuthorID"`
+
+	Placelists []Placelist `gorm:"many2many:place_placelists"`
 }
