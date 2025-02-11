@@ -3,8 +3,6 @@ package repositories
 import (
 	"placelists/internal/storage/database"
 	"placelists/internal/storage/entities"
-
-	"github.com/google/uuid"
 )
 
 type placeRepositoryImpl struct {
@@ -15,41 +13,36 @@ func NewPlaceRepository(db *database.DB) *placeRepositoryImpl {
 	return &placeRepositoryImpl{db}
 }
 
-func (r *placeRepositoryImpl) GetByPublicIDWithUser(publicID string, userID uuid.UUID) (*entities.Place, error) {
+func (r *placeRepositoryImpl) GetByPublicID(placeID string) (*entities.Place, error) {
 	var p *entities.Place
-	result := r.db.
-		Preload("Users", "user_id = ?", userID).
-		First(&p, "public_id = ?", publicID)
+	result := r.db.First(&p, "public_id = ?", placeID)
 	return p, result.Error
 }
 
-func (r *placeRepositoryImpl) GetByNameOrAddressWithUser(query string, userID uuid.UUID) (*[]entities.Place, error) {
+func (r *placeRepositoryImpl) GetByPublicIDFull(placeID string) (*entities.Place, error) {
+	var p *entities.Place
+	result := r.db.Preload("Visitors").First(&p, "public_id = ?", placeID)
+	return p, result.Error
+}
+
+func (r *placeRepositoryImpl) GetByNameOrAddress(query string) (*[]entities.Place, error) {
 	var p *[]entities.Place
-	result := r.db.
-		Preload("Users", "user_id = ?", userID).
-		Find(&p, "lower(name) LIKE lower(?) OR lower(address) LIKE lower(?)", "%"+query+"%", "%"+query+"%")
+	result := r.db.Find(&p, "lower(name) LIKE lower(?) OR lower(address) LIKE lower(?)", "%"+query+"%", "%"+query+"%")
+	return p, result.Error
+}
+
+func (r *placeRepositoryImpl) GetByNameOrAddressFull(query string) (*[]entities.Place, error) {
+	var p *[]entities.Place
+	result := r.db.Preload("Visitors").Find(&p, "lower(name) LIKE lower(?) OR lower(address) LIKE lower(?)", "%"+query+"%", "%"+query+"%")
 	return p, result.Error
 }
 
 func (r *placeRepositoryImpl) Create(p *entities.Place) error {
-	result := r.db.Create(&p)
-	return result.Error
+	createErr := r.db.Create(&p).Error
+	return createErr
 }
 
 func (r *placeRepositoryImpl) Update(p *entities.Place) error {
-	return r.db.Transaction(func(tx *database.DB) error {
-		placeSaveResult := tx.Save(&p)
-		if placeSaveResult.Error != nil {
-			return placeSaveResult.Error
-		}
-
-		if len(p.Users) > 0 {
-			userPlaceSaveResult := tx.Save(&p.Users[0])
-			if userPlaceSaveResult.Error != nil {
-				return userPlaceSaveResult.Error
-			}
-		}
-
-		return nil
-	})
+	result := r.db.Save(&p)
+	return result.Error
 }
