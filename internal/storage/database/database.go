@@ -18,9 +18,6 @@ func New(dsn string) *DB {
 		&entities.User{},
 		&entities.Place{},
 		&entities.Placelist{},
-		&entities.UserPlace{},
-		&entities.PlacelistPlace{},
-		&entities.UserPlacelist{},
 	)
 
 	return &DB{db}

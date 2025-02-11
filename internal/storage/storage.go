@@ -13,8 +13,10 @@ type Repository struct {
 }
 
 type PlaceRepository interface {
-	GetByPublicIDWithUser(publicID string, userID uuid.UUID) (*entities.Place, error)
-	GetByNameOrAddressWithUser(query string, userID uuid.UUID) (*[]entities.Place, error)
+	GetByPublicID(placeID string) (*entities.Place, error)
+	GetByPublicIDFull(placeID string) (*entities.Place, error)
+	GetByNameOrAddress(query string) (*[]entities.Place, error)
+	GetByNameOrAddressFull(query string) (*[]entities.Place, error)
 	Create(p *entities.Place) error
 	Update(p *entities.Place) error
 }

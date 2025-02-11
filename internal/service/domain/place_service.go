@@ -19,46 +19,51 @@ func NewPlaceService(
 	return &placeService{placeRepository, userRepository}
 }
 
-func (s *placeService) GetByPublicIDWithUser(publicID string, userPublicID string) (*models.Place, error) {
-	u, err := s.userRepository.GetByPublicID(userPublicID)
+func (s *placeService) GetByPublicID(placeID string, userID string) (*models.Place, error) {
+	place, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
 		return nil, err
 	}
 
-	p, err := s.placeRepository.GetByPublicIDWithUser(publicID, u.ID)
-	if err != nil {
-		return nil, err
+	visited := false
+	for _, visitor := range place.Visitors {
+		if visitor.PublicID == userID {
+			visited = true
+			break
+		}
 	}
 
 	foundPlace := &models.Place{
-		ID:      p.PublicID,
-		Name:    p.Name,
-		Address: p.Address,
-		Visited: p.Users[0].Visited,
+		ID:      place.PublicID,
+		Name:    place.Name,
+		Address: place.Address,
+		Visited: visited,
 	}
 
 	return foundPlace, nil
 }
 
-func (s *placeService) GetByNameOrAddressWithUser(query string, userPublicID string) (*[]models.Place, error) {
-	u, err := s.userRepository.GetByPublicID(userPublicID)
-	if err != nil {
-		return nil, err
-	}
-
-	places, err := s.placeRepository.GetByNameOrAddressWithUser(query, u.ID)
+func (s *placeService) GetByNameOrAddress(query string, userID string) (*[]models.Place, error) {
+	places, err := s.placeRepository.GetByNameOrAddressFull(query)
 	if err != nil {
 		return nil, err
 	}
 
 	foundPlaces := []models.Place{}
 
-	for _, p := range *places {
+	for _, place := range *places {
+		visited := false
+		for _, visitor := range place.Visitors {
+			if visitor.PublicID == userID {
+				visited = true
+				break
+			}
+		}
 		newPlace := models.Place{
-			ID:      p.PublicID,
-			Name:    p.Name,
-			Address: p.Address,
-			Visited: p.Users[0].Visited,
+			ID:      place.PublicID,
+			Name:    place.Name,
+			Address: place.Address,
+			Visited: visited,
 		}
 		foundPlaces = append(foundPlaces, newPlace)
 	}
@@ -66,50 +71,56 @@ func (s *placeService) GetByNameOrAddressWithUser(query string, userPublicID str
 	return &foundPlaces, nil
 }
 
-func (s *placeService) Create(userPublicID string, pc *models.PlaceCreate) error {
-	u, err := s.userRepository.GetByPublicID(userPublicID)
+func (s *placeService) Create(userID string, pc *models.PlaceCreate) error {
+	u, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
 	}
 
-	placeID := rdg.GenerateID()
-	place := &entities.Place{
-		ID:       placeID,
-		Name:     pc.Name,
-		PublicID: rdg.GeneratePublicID(),
-		Address:  pc.Address,
-		Users: []entities.UserPlace{
-			{
-				ID:      rdg.GenerateID(),
-				PlaceID: placeID,
-				UserID:  u.ID,
-				Visited: pc.Visited,
-				Created: true,
-			},
-		},
+	visitors := []entities.User{}
+	if pc.Visited {
+		visitors = append(visitors, *u)
 	}
 
-	err = s.placeRepository.Create(place)
+	p := &entities.Place{
+		ID:       rdg.GenerateID(),
+		PublicID: rdg.GeneratePublicID(),
+		Name:     pc.Name,
+		Address:  pc.Address,
+		AuthorID: u.ID,
+		Visitors: visitors,
+	}
+
+	err = s.placeRepository.Create(p)
 
 	return err
 }
 
-func (s *placeService) UpdateByPublicIDWithUser(publicID string, userPublicID string, pu *models.PlaceUpdate) error {
-	u, err := s.userRepository.GetByPublicID(userPublicID)
+func (s *placeService) UpdateByPublicID(placeID string, userID string, pu *models.PlaceUpdate) error {
+	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
 	}
 
-	p, err := s.placeRepository.GetByPublicIDWithUser(publicID, u.ID)
+	place, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
 		return err
 	}
 
-	p.Name = pu.Name
-	p.Address = pu.Address
-	p.Users[0].Visited = pu.Visited
+	place.Name = pu.Name
+	place.Address = pu.Address
 
-	err = s.placeRepository.Update(p)
+	for i, visitor := range place.Visitors {
+		if visitor.PublicID == userID {
+			if pu.Visited {
+				place.Visitors = append(place.Visitors, *user)
+			} else {
+				place.Visitors = append(place.Visitors[:i], place.Visitors[i+1:]...)
+			}
+		}
+	}
+
+	err = s.placeRepository.Update(place)
 
 	return err
 }

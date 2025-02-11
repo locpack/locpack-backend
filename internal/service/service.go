@@ -9,10 +9,10 @@ type Service struct {
 }
 
 type PlaceService interface {
-	GetByPublicIDWithUser(publicID string, userPublicID string) (*models.Place, error)
-	GetByNameOrAddressWithUser(query string, userPublicID string) (*[]models.Place, error)
-	Create(userPublicID string, pc *models.PlaceCreate) error
-	UpdateByPublicIDWithUser(publicID string, userPublicID string, pu *models.PlaceUpdate) error
+	GetByPublicID(placeID string, userID string) (*models.Place, error)
+	GetByNameOrAddress(query string, userID string) (*[]models.Place, error)
+	Create(userID string, pc *models.PlaceCreate) error
+	UpdateByPublicID(placeID string, userID string, pu *models.PlaceUpdate) error
 }
 
 type PlacelistService interface {

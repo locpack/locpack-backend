@@ -18,5 +18,6 @@ type Place struct {
 	AuthorID uuid.UUID `gorm:"type:uuid;not null"`
 	Author   User      `gorm:"foreignKey:AuthorID"`
 
+	Visitors   []User      `gorm:"many2many:user_visited_places"`
 	Placelists []Placelist `gorm:"many2many:place_placelists"`
 }
