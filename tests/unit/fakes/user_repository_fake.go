@@ -22,6 +22,11 @@ func (r *UserRepositoryFakeImpl) GetByPublicID(id string) (*entities.User, error
 	return nil, errors.New("user not found")
 }
 
+func (r *UserRepositoryFakeImpl) GetByPublicIDFull(id string) (*entities.User, error) {
+	user, err := r.GetByPublicID(id)
+	return user, err
+}
+
 func (r *UserRepositoryFakeImpl) Create(u *entities.User) error {
 	for _, user := range r.Users {
 		if user.ID == u.ID {

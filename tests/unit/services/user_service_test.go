@@ -16,7 +16,11 @@ func TestUserServiceGetByPublicID(t *testing.T) {
 		Users: []entities.User{
 			{
 				PublicID: "user-1",
-				Username: "testuser",
+				Username: "user-1",
+			},
+			{
+				PublicID: "user-2",
+				Username: "user-2",
 			},
 		},
 	}
@@ -24,25 +28,28 @@ func TestUserServiceGetByPublicID(t *testing.T) {
 	service := domain.NewUserService(userRepo)
 
 	tests := []struct {
-		name        string
-		publicID    string
-		expected    *models.User
-		expectedErr error
+		name              string
+		publicID          string
+		expectedResult    *models.User
+		expectedErr       error
+		expectedCondition []entities.User
 	}{
 		{
 			name:     "User found",
 			publicID: "user-1",
-			expected: &models.User{
+			expectedResult: &models.User{
 				ID:       "user-1",
-				Username: "testuser",
+				Username: "user-1",
 			},
-			expectedErr: nil,
+			expectedErr:       nil,
+			expectedCondition: userRepo.Users,
 		},
 		{
-			name:        "User not found",
-			publicID:    "user-2",
-			expected:    nil,
-			expectedErr: errors.New("user not found"),
+			name:              "User not found",
+			publicID:          "user-3",
+			expectedResult:    nil,
+			expectedErr:       errors.New("user not found"),
+			expectedCondition: userRepo.Users,
 		},
 	}
 
@@ -50,7 +57,8 @@ func TestUserServiceGetByPublicID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			user, err := service.GetByPublicID(tt.publicID)
 			assert.Equal(t, tt.expectedErr, err)
-			assert.Equal(t, tt.expected, user)
+			assert.Equal(t, tt.expectedResult, user)
+			assert.Equal(t, tt.expectedCondition, userRepo.Users)
 		})
 	}
 }
@@ -60,7 +68,11 @@ func TestUserServiceUpdateByPublicID(t *testing.T) {
 		Users: []entities.User{
 			{
 				PublicID: "user-1",
-				Username: "olduser",
+				Username: "user-1",
+			},
+			{
+				PublicID: "user-2",
+				Username: "user-2",
 			},
 		},
 	}
@@ -68,26 +80,38 @@ func TestUserServiceUpdateByPublicID(t *testing.T) {
 	service := domain.NewUserService(userRepo)
 
 	tests := []struct {
-		name        string
-		publicID    string
-		uu          *models.UserUpdate
-		expectedErr error
+		name              string
+		publicID          string
+		uu                *models.UserUpdate
+		expectedErr       error
+		expectedCondition []entities.User
 	}{
 		{
 			name:     "Update user successfully",
 			publicID: "user-1",
 			uu: &models.UserUpdate{
-				Username: "newuser",
+				Username: "user-3",
 			},
 			expectedErr: nil,
+			expectedCondition: []entities.User{
+				{
+					PublicID: "user-3",
+					Username: "user-3",
+				},
+				{
+					PublicID: "user-2",
+					Username: "user-2",
+				},
+			},
 		},
 		{
 			name:     "User not found",
-			publicID: "user-2",
+			publicID: "user-0",
 			uu: &models.UserUpdate{
 				Username: "newuser",
 			},
-			expectedErr: errors.New("user not found"),
+			expectedErr:       errors.New("user not found"),
+			expectedCondition: userRepo.Users,
 		},
 	}
 
@@ -95,6 +119,7 @@ func TestUserServiceUpdateByPublicID(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			err := service.UpdateByPublicID(tt.publicID, tt.uu)
 			assert.Equal(t, tt.expectedErr, err)
+			assert.Equal(t, tt.expectedCondition, userRepo.Users)
 		})
 	}
 }
