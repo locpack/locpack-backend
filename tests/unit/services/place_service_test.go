@@ -11,7 +11,7 @@ import (
 	"github.com/go-playground/assert"
 )
 
-func TestGetByPublicID(t *testing.T) {
+func TestPlaceServiceGetByPublicID(t *testing.T) {
 	placeRepo := &fakes.PlaceRepositoryFakeImpl{
 		Places: []entities.Place{
 			{
@@ -66,7 +66,7 @@ func TestGetByPublicID(t *testing.T) {
 	}
 }
 
-func TestGetByNameOrAddress(t *testing.T) {
+func TestPlaceServiceGetByNameOrAddress(t *testing.T) {
 	placeRepo := &fakes.PlaceRepositoryFakeImpl{
 		Places: []entities.Place{
 			{
@@ -123,7 +123,7 @@ func TestGetByNameOrAddress(t *testing.T) {
 	}
 }
 
-func TestCreate(t *testing.T) {
+func TestPlaceServiceCreate(t *testing.T) {
 	placeRepo := &fakes.PlaceRepositoryFakeImpl{}
 
 	userRepo := &fakes.UserRepositoryFakeImpl{
@@ -168,7 +168,7 @@ func TestCreate(t *testing.T) {
 	}
 }
 
-func TestUpdateByPublicID(t *testing.T) {
+func TestPlaceServiceUpdateByPublicID(t *testing.T) {
 	placeRepo := &fakes.PlaceRepositoryFakeImpl{
 		Places: []entities.Place{
 			{
