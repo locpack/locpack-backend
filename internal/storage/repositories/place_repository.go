@@ -13,15 +13,15 @@ func NewPlaceRepository(db *database.DB) *placeRepositoryImpl {
 	return &placeRepositoryImpl{db}
 }
 
-func (r *placeRepositoryImpl) GetByPublicID(placeID string) (*entities.Place, error) {
+func (r *placeRepositoryImpl) GetByPublicID(id string) (*entities.Place, error) {
 	var p *entities.Place
-	result := r.db.First(&p, "public_id = ?", placeID)
+	result := r.db.First(&p, "public_id = ?", id)
 	return p, result.Error
 }
 
-func (r *placeRepositoryImpl) GetByPublicIDFull(placeID string) (*entities.Place, error) {
+func (r *placeRepositoryImpl) GetByPublicIDFull(id string) (*entities.Place, error) {
 	var p *entities.Place
-	result := r.db.Preload("Visitors").First(&p, "public_id = ?", placeID)
+	result := r.db.Preload("Visitors").First(&p, "public_id = ?", id)
 	return p, result.Error
 }
 

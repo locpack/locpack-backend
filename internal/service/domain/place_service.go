@@ -72,26 +72,26 @@ func (s *placeService) GetByNameOrAddress(query string, userID string) (*[]model
 }
 
 func (s *placeService) Create(userID string, pc *models.PlaceCreate) error {
-	u, err := s.userRepository.GetByPublicID(userID)
+	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
 	}
 
 	visitors := []entities.User{}
 	if pc.Visited {
-		visitors = append(visitors, *u)
+		visitors = append(visitors, *user)
 	}
 
-	p := &entities.Place{
+	place := &entities.Place{
 		ID:       rdg.GenerateID(),
 		PublicID: rdg.GeneratePublicID(),
 		Name:     pc.Name,
 		Address:  pc.Address,
-		AuthorID: u.ID,
+		AuthorID: user.ID,
 		Visitors: visitors,
 	}
 
-	err = s.placeRepository.Create(p)
+	err = s.placeRepository.Create(place)
 
 	return err
 }
@@ -110,11 +110,11 @@ func (s *placeService) UpdateByPublicID(placeID string, userID string, pu *model
 	place.Name = pu.Name
 	place.Address = pu.Address
 
-	for i, visitor := range place.Visitors {
-		if visitor.PublicID == userID {
-			if pu.Visited {
-				place.Visitors = append(place.Visitors, *user)
-			} else {
+	if pu.Visited {
+		place.Visitors = append(place.Visitors, *user)
+	} else {
+		for i, visitor := range place.Visitors {
+			if visitor.PublicID == userID {
 				place.Visitors = append(place.Visitors[:i], place.Visitors[i+1:]...)
 			}
 		}

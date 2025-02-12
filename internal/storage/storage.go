@@ -2,8 +2,6 @@ package storage
 
 import (
 	"placelists/internal/storage/entities"
-
-	"github.com/google/uuid"
 )
 
 type Repository struct {
@@ -22,18 +20,15 @@ type PlaceRepository interface {
 }
 
 type PlacelistRepository interface {
-	GetByPublicID(publicID string) (*entities.Placelist, error)
-	GetByNameOrAuthorWithUser(query string, userID uuid.UUID) (*[]entities.Placelist, error)
-	// GetFollowedByUsername(username string) (*[]entities.Placelist, error)
-	// GetCreatedByUsername(username string) (*[]entities.Placelist, error)
+	GetByPublicIDFull(id string) (*entities.Placelist, error)
+	GetByNameOrAuthorFull(query string) (*[]entities.Placelist, error)
 	Create(p *entities.Placelist) error
 	Update(p *entities.Placelist) error
-	// GetPlacelistPlacesByID
-	// UpdatePlacelistPlacesByID
 }
 
 type UserRepository interface {
 	GetByPublicID(id string) (*entities.User, error)
+	GetByPublicIDFull(id string) (*entities.User, error)
 	Create(u *entities.User) error
 	Update(u *entities.User) error
 }

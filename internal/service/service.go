@@ -16,8 +16,13 @@ type PlaceService interface {
 }
 
 type PlacelistService interface {
-	GetByNameOrUsernameWithUser(query string, userPublicID string) (*[]models.Placelist, error)
-	Create(userPublicID string, pc *models.PlacelistCreate) error
+	GetByPublicID(placelistID string, userID string) (*models.Placelist, error)
+	GetByNameOrAuthor(query string, userID string) (*[]models.Placelist, error)
+	GetFollowedByUserID(userID string) (*[]models.Placelist, error)
+	GetCreatedByUserID(userID string) (*[]models.Placelist, error)
+	GetPlacesByPublicID(placelistID string, userID string) (*[]models.Place, error)
+	Create(userID string, pc *models.PlacelistCreate) error
+	UpdateByPublicID(placelistID string, userID string, pu *models.PlacelistUpdate) error
 }
 
 type UserService interface {

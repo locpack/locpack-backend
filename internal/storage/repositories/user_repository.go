@@ -19,6 +19,12 @@ func (r *userRepositoryImpl) GetByPublicID(id string) (*entities.User, error) {
 	return u, result.Error
 }
 
+func (r *userRepositoryImpl) GetByPublicIDFull(id string) (*entities.User, error) {
+	var u *entities.User
+	result := r.db.Preload("FollwedPlacelists").Preload("CreatedPlacelists").First(&u, "public_id = ?", id)
+	return u, result.Error
+}
+
 func (r *userRepositoryImpl) Create(u *entities.User) error {
 	result := r.db.Create(&u)
 	return result.Error
