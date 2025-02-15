@@ -20,7 +20,7 @@ func NewPlaceService(
 	return &placeService{placeRepository, userRepository}
 }
 
-func (s *placeService) GetByPublicID(placeID string, userID string) (models.Place, error) {
+func (s *placeService) GetByID(placeID string, userID string) (models.Place, error) {
 	place, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
 		return models.Place{}, err
@@ -97,7 +97,7 @@ func (s *placeService) Create(userID string, pc models.PlaceCreate) error {
 	return err
 }
 
-func (s *placeService) UpdateByPublicID(placeID string, userID string, pu models.PlaceUpdate) error {
+func (s *placeService) UpdateByID(placeID string, userID string, pu models.PlaceUpdate) error {
 	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err

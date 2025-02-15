@@ -23,7 +23,7 @@ func NewPlacelistService(
 	return &placelistService{placelistRepository, placeRepository, userRepository}
 }
 
-func (s *placelistService) GetByPublicID(placelistID string, userID string) (models.Placelist, error) {
+func (s *placelistService) GetByID(placelistID string, userID string) (models.Placelist, error) {
 	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
 		return models.Placelist{}, err
@@ -136,7 +136,7 @@ func (s *placelistService) GetCreatedByUserID(userID string) ([]models.Placelist
 	return foundPlacelists, nil
 }
 
-func (s *placelistService) GetPlacesByPublicID(placelistID string, userID string) ([]models.Place, error) {
+func (s *placelistService) GetPlacesByID(placelistID string, userID string) ([]models.Place, error) {
 	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
 		return []models.Place{}, err
@@ -182,7 +182,7 @@ func (s *placelistService) Create(userID string, pc models.PlacelistCreate) erro
 	return err
 }
 
-func (s *placelistService) UpdateByPublicID(placelistID string, userID string, pu models.PlacelistUpdate) error {
+func (s *placelistService) UpdateByID(placelistID string, userID string, pu models.PlacelistUpdate) error {
 	if pu.Status == models.PlacelistCreated {
 		return errors.New("impossible to create placelist with update function")
 	}

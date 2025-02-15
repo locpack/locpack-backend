@@ -14,8 +14,8 @@ func NewUserService(repository storage.UserRepository) service.UserService {
 	return &userService{repository}
 }
 
-func (s *userService) GetByPublicID(publicID string) (models.User, error) {
-	u, err := s.repository.GetByPublicID(publicID)
+func (s *userService) GetByID(id string) (models.User, error) {
+	u, err := s.repository.GetByPublicID(id)
 	if err != nil {
 		return models.User{}, err
 	}
@@ -28,8 +28,8 @@ func (s *userService) GetByPublicID(publicID string) (models.User, error) {
 	return foundUser, nil
 }
 
-func (s *userService) UpdateByPublicID(publicID string, uu models.UserUpdate) error {
-	u, err := s.repository.GetByPublicID(publicID)
+func (s *userService) UpdateByID(id string, uu models.UserUpdate) error {
+	u, err := s.repository.GetByPublicID(id)
 	if err != nil {
 		return err
 	}
