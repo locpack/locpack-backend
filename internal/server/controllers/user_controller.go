@@ -20,6 +20,11 @@ func NewUserController(service service.UserService) server.UserController {
 	return &userControllerImpl{service}
 }
 
+// GetUsers return list of all users from the database
+// @Summary return list of all
+// @Description return list of all users from the database
+// @Tags Users
+// @Router /users [get]
 func (c *userControllerImpl) GetUserMy(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {

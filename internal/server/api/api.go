@@ -5,18 +5,12 @@ import (
 	"placelists/internal/server/dtos"
 
 	"github.com/gin-gonic/gin"
+	swaggerFiles "github.com/swaggo/files"
+	ginSwagger "github.com/swaggo/gin-swagger"
 )
 
-func Response(ctx *gin.Context, statusCode int, data any, errors []dtos.Error) {
-	ctx.JSON(statusCode, dtos.ResponseWrapper[any]{
-		Data:   data,
-		Meta:   dtos.Meta{Success: len(errors) == 0},
-		Errors: errors,
-	})
-}
-
 func New(controller *server.Controller) *gin.Engine {
-	g := gin.New()
+	g := gin.Default()
 	router := g.Group("/api")
 	{
 		v1Router := router.Group("/v1")
@@ -45,5 +39,14 @@ func New(controller *server.Controller) *gin.Engine {
 			}
 		}
 	}
+	g.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 	return g
+}
+
+func Response(ctx *gin.Context, statusCode int, data any, errors []dtos.Error) {
+	ctx.JSON(statusCode, dtos.ResponseWrapper[any]{
+		Data:   data,
+		Meta:   dtos.Meta{Success: len(errors) == 0},
+		Errors: errors,
+	})
 }

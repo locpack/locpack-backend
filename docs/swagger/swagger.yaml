@@ -1,0 +1,15 @@
+basePath: /api
+host: localhost:8082
+info:
+  contact: {}
+  title: Placelists
+  version: "1.1"
+paths:
+  /users:
+    get:
+      description: return list of all users from the database
+      responses: {}
+      summary: return list of all
+      tags:
+      - Users
+swagger: "2.0"
