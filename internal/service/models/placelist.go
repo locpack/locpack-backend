@@ -9,7 +9,7 @@ const (
 )
 
 type Placelist struct {
-	ID             string
+	ID             string `copier:"PublicID"`
 	Name           string
 	AuthorID       string
 	AuthorUsername string

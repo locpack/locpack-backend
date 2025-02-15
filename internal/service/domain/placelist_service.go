@@ -7,6 +7,8 @@ import (
 	"placelists/internal/storage"
 	"placelists/internal/storage/entities"
 	"placelists/pkg/rdg"
+
+	"github.com/jinzhu/copier"
 )
 
 type placelistServiceImpl struct {
@@ -24,13 +26,13 @@ func NewPlacelistService(
 }
 
 func (s *placelistServiceImpl) GetByID(placelistID string, userID string) (models.Placelist, error) {
-	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
+	placelistEntity, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
 		return models.Placelist{}, err
 	}
 
 	followed := false
-	for _, follower := range placelist.FollowedUsers {
+	for _, follower := range placelistEntity.FollowedUsers {
 		if follower.PublicID == userID {
 			followed = true
 			break
@@ -38,17 +40,17 @@ func (s *placelistServiceImpl) GetByID(placelistID string, userID string) (model
 	}
 
 	status := models.PlacelistNone
-	if placelist.Author.PublicID == userID {
+	if placelistEntity.Author.PublicID == userID {
 		status = models.PlacelistCreated
 	} else if followed {
 		status = models.PlacelistFollowed
 	}
 
 	foundPlacelist := models.Placelist{
-		ID:             placelist.PublicID,
-		Name:           placelist.Name,
-		AuthorID:       placelist.Author.PublicID,
-		AuthorUsername: placelist.Author.Username,
+		ID:             placelistEntity.PublicID,
+		Name:           placelistEntity.Name,
+		AuthorID:       placelistEntity.Author.PublicID,
+		AuthorUsername: placelistEntity.Author.Username,
 		Status:         status,
 	}
 
@@ -56,16 +58,16 @@ func (s *placelistServiceImpl) GetByID(placelistID string, userID string) (model
 }
 
 func (s *placelistServiceImpl) GetByNameOrAuthor(query string, userID string) ([]models.Placelist, error) {
-	placelists, err := s.placelistRepository.GetByNameOrAuthorFull(query)
+	placelistsEntities, err := s.placelistRepository.GetByNameOrAuthorFull(query)
 	if err != nil {
 		return []models.Placelist{}, err
 	}
 
 	foundPlacelists := []models.Placelist{}
 
-	for _, placelist := range placelists {
+	for _, placelistEntity := range placelistsEntities {
 		followed := false
-		for _, follower := range placelist.FollowedUsers {
+		for _, follower := range placelistEntity.FollowedUsers {
 			if follower.PublicID == userID {
 				followed = true
 				break
@@ -73,154 +75,166 @@ func (s *placelistServiceImpl) GetByNameOrAuthor(query string, userID string) ([
 		}
 
 		status := models.PlacelistNone
-		if placelist.Author.PublicID == userID {
+		if placelistEntity.Author.PublicID == userID {
 			status = models.PlacelistCreated
 		} else if followed {
 			status = models.PlacelistFollowed
 		}
 
-		newPlacelist := models.Placelist{
-			ID:             placelist.PublicID,
-			Name:           placelist.Name,
-			AuthorID:       placelist.Author.PublicID,
-			AuthorUsername: placelist.Author.Username,
+		placelist := models.Placelist{
+			ID:             placelistEntity.PublicID,
+			Name:           placelistEntity.Name,
+			AuthorID:       placelistEntity.Author.PublicID,
+			AuthorUsername: placelistEntity.Author.Username,
 			Status:         status,
 		}
-		foundPlacelists = append(foundPlacelists, newPlacelist)
+
+		foundPlacelists = append(foundPlacelists, placelist)
 	}
 
 	return foundPlacelists, nil
 }
 
 func (s *placelistServiceImpl) GetFollowedByUserID(userID string) ([]models.Placelist, error) {
-	user, err := s.userRepository.GetByPublicIDFull(userID)
+	userEntity, err := s.userRepository.GetByPublicIDFull(userID)
 	if err != nil {
 		return []models.Placelist{}, err
 	}
 
 	foundPlacelists := []models.Placelist{}
 
-	for _, placelist := range user.FollwedPlacelists {
-		newPlacelist := models.Placelist{
-			ID:             placelist.PublicID,
-			Name:           placelist.Name,
-			AuthorID:       placelist.Author.PublicID,
-			AuthorUsername: placelist.Author.Username,
+	for _, placelistEntity := range userEntity.FollwedPlacelists {
+		placelist := models.Placelist{
+			ID:             placelistEntity.PublicID,
+			Name:           placelistEntity.Name,
+			AuthorID:       placelistEntity.Author.PublicID,
+			AuthorUsername: placelistEntity.Author.Username,
 			Status:         models.PlacelistFollowed,
 		}
-		foundPlacelists = append(foundPlacelists, newPlacelist)
+		foundPlacelists = append(foundPlacelists, placelist)
 	}
 
 	return foundPlacelists, nil
 }
 
 func (s *placelistServiceImpl) GetCreatedByUserID(userID string) ([]models.Placelist, error) {
-	user, err := s.userRepository.GetByPublicIDFull(userID)
+	userEntity, err := s.userRepository.GetByPublicIDFull(userID)
 	if err != nil {
 		return []models.Placelist{}, err
 	}
 
 	foundPlacelists := []models.Placelist{}
 
-	for _, placelist := range user.FollwedPlacelists {
-		newPlacelist := models.Placelist{
-			ID:             placelist.PublicID,
-			Name:           placelist.Name,
-			AuthorID:       placelist.Author.PublicID,
-			AuthorUsername: placelist.Author.Username,
+	for _, placelistEntity := range userEntity.FollwedPlacelists {
+		placelist := models.Placelist{
+			ID:             placelistEntity.PublicID,
+			Name:           placelistEntity.Name,
+			AuthorID:       placelistEntity.Author.PublicID,
+			AuthorUsername: placelistEntity.Author.Username,
 			Status:         models.PlacelistCreated,
 		}
-		foundPlacelists = append(foundPlacelists, newPlacelist)
+		foundPlacelists = append(foundPlacelists, placelist)
 	}
 
 	return foundPlacelists, nil
 }
 
 func (s *placelistServiceImpl) GetPlacesByID(placelistID string, userID string) ([]models.Place, error) {
-	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
+	placelistEntity, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
 		return []models.Place{}, err
 	}
 
 	foundPlaces := []models.Place{}
 
-	for _, place := range placelist.Places {
+	for _, placeEntity := range placelistEntity.Places {
 		visited := false
-		for _, visitor := range place.Visitors {
+		for _, visitor := range placeEntity.Visitors {
 			if visitor.PublicID == userID {
 				visited = true
 				break
 			}
 		}
-		newPlace := models.Place{
-			ID:      place.PublicID,
-			Name:    place.Name,
-			Address: place.Address,
-			Visited: visited,
-		}
-		foundPlaces = append(foundPlaces, newPlace)
+
+		place := models.Place{}
+		copier.Copy(&placeEntity, &place)
+		place.Visited = visited
+
+		foundPlaces = append(foundPlaces, place)
 	}
 
 	return foundPlaces, nil
 }
 
-func (s *placelistServiceImpl) Create(userID string, pc models.PlacelistCreate) error {
-	user, err := s.userRepository.GetByPublicID(userID)
+func (s *placelistServiceImpl) Create(userID string, pc models.PlacelistCreate) (models.Placelist, error) {
+	userEntity, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
-		return err
+		return models.Placelist{}, err
 	}
 
-	placelist := entities.Placelist{
+	placelistEntity := entities.Placelist{
 		ID:       rdg.GenerateID(),
 		PublicID: rdg.GeneratePublicID(),
 		Name:     pc.Name,
-		AuthorID: user.ID,
+		AuthorID: userEntity.ID,
 	}
 
-	err = s.placelistRepository.Create(placelist)
+	err = s.placelistRepository.Create(placelistEntity)
+	if err != nil {
+		return models.Placelist{}, err
+	}
 
-	return err
+	placelist := models.Placelist{}
+	copier.Copy(&placelistEntity, &placelist)
+
+	return placelist, err
 }
 
-func (s *placelistServiceImpl) UpdateByID(placelistID string, userID string, pu models.PlacelistUpdate) error {
+func (s *placelistServiceImpl) UpdateByID(placelistID string, userID string, pu models.PlacelistUpdate) (models.Placelist, error) {
 	if pu.Status == models.PlacelistCreated {
-		return errors.New("impossible to create placelist with update function")
+		return models.Placelist{}, errors.New("impossible to create placelist with update function")
 	}
 
-	user, err := s.userRepository.GetByPublicID(userID)
+	userEntity, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
-		return err
+		return models.Placelist{}, err
 	}
 
-	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
+	placelistEntity, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
-		return err
+		return models.Placelist{}, err
 	}
 
-	placelist.Name = pu.Name
+	placelistEntity.Name = pu.Name
 
 	if pu.Status == models.PlacelistFollowed {
-		placelist.FollowedUsers = append(placelist.FollowedUsers, user)
+		placelistEntity.FollowedUsers = append(placelistEntity.FollowedUsers, userEntity)
 	} else if pu.Status == models.PlacelistNone {
-		for i, follower := range placelist.FollowedUsers {
+		for i, follower := range placelistEntity.FollowedUsers {
 			if follower.PublicID == userID {
-				placelist.FollowedUsers = append(placelist.FollowedUsers[:i], placelist.FollowedUsers[i+1:]...)
+				placelistEntity.FollowedUsers = append(placelistEntity.FollowedUsers[:i], placelistEntity.FollowedUsers[i+1:]...)
 			}
 		}
 	}
 
-	newPlaces := []entities.Place{}
+	placesEntities := []entities.Place{}
 
 	for _, placeID := range pu.PlacesIDs {
-		place, err := s.placeRepository.GetByPublicID(placeID)
+		placeEntity, err := s.placeRepository.GetByPublicID(placeID)
 		if err == nil {
-			newPlaces = append(newPlaces, place)
+			placesEntities = append(placesEntities, placeEntity)
 		}
 	}
 
-	placelist.Places = newPlaces
+	placelistEntity.Places = placesEntities
 
-	err = s.placelistRepository.Update(placelist)
+	err = s.placelistRepository.Update(placelistEntity)
+	if err != nil {
+		return models.Placelist{}, err
+	}
 
-	return err
+	placelist := models.Placelist{}
+	copier.Copy(&placelistEntity, &placelist)
+
+	return placelist, err
 }

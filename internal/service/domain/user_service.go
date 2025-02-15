@@ -4,6 +4,8 @@ import (
 	"placelists/internal/service"
 	"placelists/internal/service/models"
 	"placelists/internal/storage"
+
+	"github.com/jinzhu/copier"
 )
 
 type userServiceImpl struct {
@@ -15,29 +17,33 @@ func NewUserService(repository storage.UserRepository) service.UserService {
 }
 
 func (s *userServiceImpl) GetByID(id string) (models.User, error) {
-	u, err := s.repository.GetByPublicID(id)
+	userEntity, err := s.repository.GetByPublicID(id)
 	if err != nil {
 		return models.User{}, err
 	}
 
-	foundUser := models.User{
-		ID:       u.PublicID,
-		Username: u.Username,
-	}
+	user := models.User{}
+	copier.Copy(&userEntity, &user)
 
-	return foundUser, nil
+	return user, err
 }
 
-func (s *userServiceImpl) UpdateByID(id string, uu models.UserUpdate) error {
-	u, err := s.repository.GetByPublicID(id)
+func (s *userServiceImpl) UpdateByID(id string, uu models.UserUpdate) (models.User, error) {
+	userEntity, err := s.repository.GetByPublicID(id)
 	if err != nil {
-		return err
+		return models.User{}, err
 	}
 
-	u.Username = uu.Username
-	u.PublicID = uu.Username
+	userEntity.Username = uu.Username
+	userEntity.PublicID = uu.Username
 
-	err = s.repository.Update(u)
+	err = s.repository.Update(userEntity)
+	if err != nil {
+		return models.User{}, err
+	}
 
-	return err
+	user := models.User{}
+	copier.Copy(&userEntity, &user)
+
+	return user, err
 }

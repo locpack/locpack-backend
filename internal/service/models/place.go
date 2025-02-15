@@ -1,7 +1,7 @@
 package models
 
 type Place struct {
-	ID      string
+	ID      string `copier:"PublicID"`
 	Name    string
 	Address string
 	Visited bool

@@ -1,7 +1,7 @@
 package models
 
 type User struct {
-	ID       string
+	ID       string `copier:"PublicID"`
 	Username string
 }
 

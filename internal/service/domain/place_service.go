@@ -6,6 +6,8 @@ import (
 	"placelists/internal/storage"
 	"placelists/internal/storage/entities"
 	"placelists/pkg/rdg"
+
+	"github.com/jinzhu/copier"
 )
 
 type placeServiceImpl struct {
@@ -21,107 +23,115 @@ func NewPlaceService(
 }
 
 func (s *placeServiceImpl) GetByID(placeID string, userID string) (models.Place, error) {
-	place, err := s.placeRepository.GetByPublicIDFull(placeID)
+	placeEntity, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
 		return models.Place{}, err
 	}
 
 	visited := false
-	for _, visitor := range place.Visitors {
+	for _, visitor := range placeEntity.Visitors {
 		if visitor.PublicID == userID {
 			visited = true
 			break
 		}
 	}
 
-	foundPlace := models.Place{
-		ID:      place.PublicID,
-		Name:    place.Name,
-		Address: place.Address,
-		Visited: visited,
-	}
+	place := models.Place{}
+	copier.Copy(&placeEntity, &place)
+	place.Visited = visited
 
-	return foundPlace, nil
+	return place, nil
 }
 
 func (s *placeServiceImpl) GetByNameOrAddress(query string, userID string) ([]models.Place, error) {
-	places, err := s.placeRepository.GetByNameOrAddressFull(query)
+	placesEntities, err := s.placeRepository.GetByNameOrAddressFull(query)
 	if err != nil {
 		return []models.Place{}, err
 	}
 
 	foundPlaces := []models.Place{}
 
-	for _, place := range places {
+	for _, placeEntity := range placesEntities {
 		visited := false
-		for _, visitor := range place.Visitors {
+		for _, visitor := range placeEntity.Visitors {
 			if visitor.PublicID == userID {
 				visited = true
 				break
 			}
 		}
-		newPlace := models.Place{
-			ID:      place.PublicID,
-			Name:    place.Name,
-			Address: place.Address,
-			Visited: visited,
-		}
-		foundPlaces = append(foundPlaces, newPlace)
+
+		place := models.Place{}
+		copier.Copy(&placeEntity, &place)
+		place.Visited = visited
+
+		foundPlaces = append(foundPlaces, place)
 	}
 
 	return foundPlaces, nil
 }
 
-func (s *placeServiceImpl) Create(userID string, pc models.PlaceCreate) error {
-	user, err := s.userRepository.GetByPublicID(userID)
+func (s *placeServiceImpl) Create(userID string, pc models.PlaceCreate) (models.Place, error) {
+	userEntity, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
-		return err
+		return models.Place{}, err
 	}
 
 	visitors := []entities.User{}
 	if pc.Visited {
-		visitors = append(visitors, user)
+		visitors = append(visitors, userEntity)
 	}
 
-	place := entities.Place{
+	placeEntity := entities.Place{
 		ID:       rdg.GenerateID(),
 		PublicID: rdg.GeneratePublicID(),
 		Name:     pc.Name,
 		Address:  pc.Address,
-		AuthorID: user.ID,
+		AuthorID: userEntity.ID,
 		Visitors: visitors,
 	}
 
-	err = s.placeRepository.Create(place)
+	err = s.placeRepository.Create(placeEntity)
+	if err != nil {
+		return models.Place{}, err
+	}
 
-	return err
+	place := models.Place{}
+	copier.Copy(&placeEntity, &place)
+
+	return place, err
 }
 
-func (s *placeServiceImpl) UpdateByID(placeID string, userID string, pu models.PlaceUpdate) error {
-	user, err := s.userRepository.GetByPublicID(userID)
+func (s *placeServiceImpl) UpdateByID(placeID string, userID string, pu models.PlaceUpdate) (models.Place, error) {
+	userEntity, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
-		return err
+		return models.Place{}, err
 	}
 
-	place, err := s.placeRepository.GetByPublicIDFull(placeID)
+	placeEntity, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
-		return err
+		return models.Place{}, err
 	}
 
-	place.Name = pu.Name
-	place.Address = pu.Address
+	placeEntity.Name = pu.Name
+	placeEntity.Address = pu.Address
 
 	if pu.Visited {
-		place.Visitors = append(place.Visitors, user)
+		placeEntity.Visitors = append(placeEntity.Visitors, userEntity)
 	} else {
-		for i, visitor := range place.Visitors {
+		for i, visitor := range placeEntity.Visitors {
 			if visitor.PublicID == userID {
-				place.Visitors = append(place.Visitors[:i], place.Visitors[i+1:]...)
+				placeEntity.Visitors = append(placeEntity.Visitors[:i], placeEntity.Visitors[i+1:]...)
 			}
 		}
 	}
 
-	err = s.placeRepository.Update(place)
+	err = s.placeRepository.Update(placeEntity)
+	if err != nil {
+		return models.Place{}, err
+	}
 
-	return err
+	place := models.Place{}
+	copier.Copy(&placeEntity, &place)
+
+	return place, err
 }
