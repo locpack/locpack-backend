@@ -22,10 +22,10 @@ func NewPlacelistService(
 	return &placelistService{placelistRepository, placeRepository, userRepository}
 }
 
-func (s *placelistService) GetByPublicID(placelistID string, userID string) (*models.Placelist, error) {
+func (s *placelistService) GetByPublicID(placelistID string, userID string) (models.Placelist, error) {
 	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
-		return nil, err
+		return models.Placelist{}, err
 	}
 
 	followed := false
@@ -43,7 +43,7 @@ func (s *placelistService) GetByPublicID(placelistID string, userID string) (*mo
 		status = models.PlacelistFollowed
 	}
 
-	foundPlacelist := &models.Placelist{
+	foundPlacelist := models.Placelist{
 		ID:             placelist.PublicID,
 		Name:           placelist.Name,
 		AuthorID:       placelist.Author.PublicID,
@@ -54,15 +54,15 @@ func (s *placelistService) GetByPublicID(placelistID string, userID string) (*mo
 	return foundPlacelist, nil
 }
 
-func (s *placelistService) GetByNameOrAuthor(query string, userID string) (*[]models.Placelist, error) {
+func (s *placelistService) GetByNameOrAuthor(query string, userID string) ([]models.Placelist, error) {
 	placelists, err := s.placelistRepository.GetByNameOrAuthorFull(query)
 	if err != nil {
-		return nil, err
+		return []models.Placelist{}, err
 	}
 
 	foundPlacelists := []models.Placelist{}
 
-	for _, placelist := range *placelists {
+	for _, placelist := range placelists {
 		followed := false
 		for _, follower := range placelist.FollowedUsers {
 			if follower.PublicID == userID {
@@ -88,13 +88,13 @@ func (s *placelistService) GetByNameOrAuthor(query string, userID string) (*[]mo
 		foundPlacelists = append(foundPlacelists, newPlacelist)
 	}
 
-	return &foundPlacelists, nil
+	return foundPlacelists, nil
 }
 
-func (s *placelistService) GetFollowedByUserID(userID string) (*[]models.Placelist, error) {
+func (s *placelistService) GetFollowedByUserID(userID string) ([]models.Placelist, error) {
 	user, err := s.userRepository.GetByPublicIDFull(userID)
 	if err != nil {
-		return nil, err
+		return []models.Placelist{}, err
 	}
 
 	foundPlacelists := []models.Placelist{}
@@ -110,13 +110,13 @@ func (s *placelistService) GetFollowedByUserID(userID string) (*[]models.Placeli
 		foundPlacelists = append(foundPlacelists, newPlacelist)
 	}
 
-	return &foundPlacelists, nil
+	return foundPlacelists, nil
 }
 
-func (s *placelistService) GetCreatedByUserID(userID string) (*[]models.Placelist, error) {
+func (s *placelistService) GetCreatedByUserID(userID string) ([]models.Placelist, error) {
 	user, err := s.userRepository.GetByPublicIDFull(userID)
 	if err != nil {
-		return nil, err
+		return []models.Placelist{}, err
 	}
 
 	foundPlacelists := []models.Placelist{}
@@ -132,13 +132,13 @@ func (s *placelistService) GetCreatedByUserID(userID string) (*[]models.Placelis
 		foundPlacelists = append(foundPlacelists, newPlacelist)
 	}
 
-	return &foundPlacelists, nil
+	return foundPlacelists, nil
 }
 
-func (s *placelistService) GetPlacesByPublicID(placelistID string, userID string) (*[]models.Place, error) {
+func (s *placelistService) GetPlacesByPublicID(placelistID string, userID string) ([]models.Place, error) {
 	placelist, err := s.placelistRepository.GetByPublicIDFull(placelistID)
 	if err != nil {
-		return nil, err
+		return []models.Place{}, err
 	}
 
 	foundPlaces := []models.Place{}
@@ -160,16 +160,16 @@ func (s *placelistService) GetPlacesByPublicID(placelistID string, userID string
 		foundPlaces = append(foundPlaces, newPlace)
 	}
 
-	return &foundPlaces, nil
+	return foundPlaces, nil
 }
 
-func (s *placelistService) Create(userID string, pc *models.PlacelistCreate) error {
+func (s *placelistService) Create(userID string, pc models.PlacelistCreate) error {
 	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
 	}
 
-	placelist := &entities.Placelist{
+	placelist := entities.Placelist{
 		ID:       rdg.GenerateID(),
 		PublicID: rdg.GeneratePublicID(),
 		Name:     pc.Name,
@@ -181,7 +181,7 @@ func (s *placelistService) Create(userID string, pc *models.PlacelistCreate) err
 	return err
 }
 
-func (s *placelistService) UpdateByPublicID(placelistID string, userID string, pu *models.PlacelistUpdate) error {
+func (s *placelistService) UpdateByPublicID(placelistID string, userID string, pu models.PlacelistUpdate) error {
 	if pu.Status == models.PlacelistCreated {
 		return errors.New("impossible to create placelist with update function")
 	}
@@ -199,7 +199,7 @@ func (s *placelistService) UpdateByPublicID(placelistID string, userID string, p
 	placelist.Name = pu.Name
 
 	if pu.Status == models.PlacelistFollowed {
-		placelist.FollowedUsers = append(placelist.FollowedUsers, *user)
+		placelist.FollowedUsers = append(placelist.FollowedUsers, user)
 	} else if pu.Status == models.PlacelistNone {
 		for i, follower := range placelist.FollowedUsers {
 			if follower.PublicID == userID {
@@ -213,7 +213,7 @@ func (s *placelistService) UpdateByPublicID(placelistID string, userID string, p
 	for _, placeID := range pu.PlacesIDs {
 		place, err := s.placeRepository.GetByPublicID(placeID)
 		if err == nil {
-			newPlaces = append(newPlaces, *place)
+			newPlaces = append(newPlaces, place)
 		}
 	}
 

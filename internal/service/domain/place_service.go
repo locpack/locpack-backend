@@ -19,10 +19,10 @@ func NewPlaceService(
 	return &placeService{placeRepository, userRepository}
 }
 
-func (s *placeService) GetByPublicID(placeID string, userID string) (*models.Place, error) {
+func (s *placeService) GetByPublicID(placeID string, userID string) (models.Place, error) {
 	place, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
-		return nil, err
+		return models.Place{}, err
 	}
 
 	visited := false
@@ -33,7 +33,7 @@ func (s *placeService) GetByPublicID(placeID string, userID string) (*models.Pla
 		}
 	}
 
-	foundPlace := &models.Place{
+	foundPlace := models.Place{
 		ID:      place.PublicID,
 		Name:    place.Name,
 		Address: place.Address,
@@ -43,15 +43,15 @@ func (s *placeService) GetByPublicID(placeID string, userID string) (*models.Pla
 	return foundPlace, nil
 }
 
-func (s *placeService) GetByNameOrAddress(query string, userID string) (*[]models.Place, error) {
+func (s *placeService) GetByNameOrAddress(query string, userID string) ([]models.Place, error) {
 	places, err := s.placeRepository.GetByNameOrAddressFull(query)
 	if err != nil {
-		return nil, err
+		return []models.Place{}, err
 	}
 
 	foundPlaces := []models.Place{}
 
-	for _, place := range *places {
+	for _, place := range places {
 		visited := false
 		for _, visitor := range place.Visitors {
 			if visitor.PublicID == userID {
@@ -68,10 +68,10 @@ func (s *placeService) GetByNameOrAddress(query string, userID string) (*[]model
 		foundPlaces = append(foundPlaces, newPlace)
 	}
 
-	return &foundPlaces, nil
+	return foundPlaces, nil
 }
 
-func (s *placeService) Create(userID string, pc *models.PlaceCreate) error {
+func (s *placeService) Create(userID string, pc models.PlaceCreate) error {
 	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
@@ -79,10 +79,10 @@ func (s *placeService) Create(userID string, pc *models.PlaceCreate) error {
 
 	visitors := []entities.User{}
 	if pc.Visited {
-		visitors = append(visitors, *user)
+		visitors = append(visitors, user)
 	}
 
-	place := &entities.Place{
+	place := entities.Place{
 		ID:       rdg.GenerateID(),
 		PublicID: rdg.GeneratePublicID(),
 		Name:     pc.Name,
@@ -96,7 +96,7 @@ func (s *placeService) Create(userID string, pc *models.PlaceCreate) error {
 	return err
 }
 
-func (s *placeService) UpdateByPublicID(placeID string, userID string, pu *models.PlaceUpdate) error {
+func (s *placeService) UpdateByPublicID(placeID string, userID string, pu models.PlaceUpdate) error {
 	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
@@ -111,7 +111,7 @@ func (s *placeService) UpdateByPublicID(placeID string, userID string, pu *model
 	place.Address = pu.Address
 
 	if pu.Visited {
-		place.Visitors = append(place.Visitors, *user)
+		place.Visitors = append(place.Visitors, user)
 	} else {
 		for i, visitor := range place.Visitors {
 			if visitor.PublicID == userID {

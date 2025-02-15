@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"placelists/internal/service"
 	"placelists/internal/service/models"
 	"placelists/internal/storage"
 )
@@ -9,17 +10,17 @@ type userService struct {
 	repository storage.UserRepository
 }
 
-func NewUserService(repository storage.UserRepository) *userService {
+func NewUserService(repository storage.UserRepository) service.UserService {
 	return &userService{repository}
 }
 
-func (s *userService) GetByPublicID(publicID string) (*models.User, error) {
+func (s *userService) GetByPublicID(publicID string) (models.User, error) {
 	u, err := s.repository.GetByPublicID(publicID)
 	if err != nil {
-		return nil, err
+		return models.User{}, err
 	}
 
-	foundUser := &models.User{
+	foundUser := models.User{
 		ID:       u.PublicID,
 		Username: u.Username,
 	}
@@ -27,7 +28,7 @@ func (s *userService) GetByPublicID(publicID string) (*models.User, error) {
 	return foundUser, nil
 }
 
-func (s *userService) UpdateByPublicID(publicID string, uu *models.UserUpdate) error {
+func (s *userService) UpdateByPublicID(publicID string, uu models.UserUpdate) error {
 	u, err := s.repository.GetByPublicID(publicID)
 	if err != nil {
 		return err
