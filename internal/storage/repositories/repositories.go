@@ -2,7 +2,7 @@ package repositories
 
 import (
 	"placelists/internal/storage"
-	"placelists/internal/storage/database"
+	"placelists/pkg/database"
 )
 
 func NewRepository(db *database.DB) *storage.Repository {

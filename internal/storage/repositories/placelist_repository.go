@@ -2,8 +2,8 @@ package repositories
 
 import (
 	"placelists/internal/storage"
-	"placelists/internal/storage/database"
 	"placelists/internal/storage/entities"
+	"placelists/pkg/database"
 )
 
 type placelistRepositoryImpl struct {

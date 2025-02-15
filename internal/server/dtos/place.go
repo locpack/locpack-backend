@@ -10,6 +10,7 @@ type Place struct {
 type PlaceCreate struct {
 	Name    string `json:"name"`
 	Address string `json:"address"`
+	Visited string `json:"visited"`
 }
 
 type PlaceUpdate struct {
