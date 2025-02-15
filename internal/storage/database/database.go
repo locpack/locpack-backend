@@ -12,7 +12,7 @@ type DB struct {
 }
 
 func New(dsn string) *DB {
-	db, _ := gorm.Open(sqlite.Open(dsn), &gorm.Config{})
+	db, _ := gorm.Open(sqlite.Open(dsn))
 
 	db.AutoMigrate(
 		&entities.User{},
