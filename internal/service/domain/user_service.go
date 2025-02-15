@@ -6,15 +6,15 @@ import (
 	"placelists/internal/storage"
 )
 
-type userService struct {
+type userServiceImpl struct {
 	repository storage.UserRepository
 }
 
 func NewUserService(repository storage.UserRepository) service.UserService {
-	return &userService{repository}
+	return &userServiceImpl{repository}
 }
 
-func (s *userService) GetByID(id string) (models.User, error) {
+func (s *userServiceImpl) GetByID(id string) (models.User, error) {
 	u, err := s.repository.GetByPublicID(id)
 	if err != nil {
 		return models.User{}, err
@@ -28,7 +28,7 @@ func (s *userService) GetByID(id string) (models.User, error) {
 	return foundUser, nil
 }
 
-func (s *userService) UpdateByID(id string, uu models.UserUpdate) error {
+func (s *userServiceImpl) UpdateByID(id string, uu models.UserUpdate) error {
 	u, err := s.repository.GetByPublicID(id)
 	if err != nil {
 		return err

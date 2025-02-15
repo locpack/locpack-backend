@@ -8,7 +8,7 @@ import (
 	"placelists/pkg/rdg"
 )
 
-type placeService struct {
+type placeServiceImpl struct {
 	placeRepository storage.PlaceRepository
 	userRepository  storage.UserRepository
 }
@@ -17,10 +17,10 @@ func NewPlaceService(
 	placeRepository storage.PlaceRepository,
 	userRepository storage.UserRepository,
 ) service.PlaceService {
-	return &placeService{placeRepository, userRepository}
+	return &placeServiceImpl{placeRepository, userRepository}
 }
 
-func (s *placeService) GetByID(placeID string, userID string) (models.Place, error) {
+func (s *placeServiceImpl) GetByID(placeID string, userID string) (models.Place, error) {
 	place, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
 		return models.Place{}, err
@@ -44,7 +44,7 @@ func (s *placeService) GetByID(placeID string, userID string) (models.Place, err
 	return foundPlace, nil
 }
 
-func (s *placeService) GetByNameOrAddress(query string, userID string) ([]models.Place, error) {
+func (s *placeServiceImpl) GetByNameOrAddress(query string, userID string) ([]models.Place, error) {
 	places, err := s.placeRepository.GetByNameOrAddressFull(query)
 	if err != nil {
 		return []models.Place{}, err
@@ -72,7 +72,7 @@ func (s *placeService) GetByNameOrAddress(query string, userID string) ([]models
 	return foundPlaces, nil
 }
 
-func (s *placeService) Create(userID string, pc models.PlaceCreate) error {
+func (s *placeServiceImpl) Create(userID string, pc models.PlaceCreate) error {
 	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
@@ -97,7 +97,7 @@ func (s *placeService) Create(userID string, pc models.PlaceCreate) error {
 	return err
 }
 
-func (s *placeService) UpdateByID(placeID string, userID string, pu models.PlaceUpdate) error {
+func (s *placeServiceImpl) UpdateByID(placeID string, userID string, pu models.PlaceUpdate) error {
 	user, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
 		return err
