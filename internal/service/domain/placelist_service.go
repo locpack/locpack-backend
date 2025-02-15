@@ -2,6 +2,7 @@ package domain
 
 import (
 	"errors"
+	"placelists/internal/service"
 	"placelists/internal/service/models"
 	"placelists/internal/storage"
 	"placelists/internal/storage/entities"
@@ -18,7 +19,7 @@ func NewPlacelistService(
 	placelistRepository storage.PlacelistRepository,
 	placeRepository storage.PlaceRepository,
 	userRepository storage.UserRepository,
-) *placelistService {
+) service.PlacelistService {
 	return &placelistService{placelistRepository, placeRepository, userRepository}
 }
 

@@ -1,6 +1,7 @@
 package domain
 
 import (
+	"placelists/internal/service"
 	"placelists/internal/service/models"
 	"placelists/internal/storage"
 	"placelists/internal/storage/entities"
@@ -15,7 +16,7 @@ type placeService struct {
 func NewPlaceService(
 	placeRepository storage.PlaceRepository,
 	userRepository storage.UserRepository,
-) *placeService {
+) service.PlaceService {
 	return &placeService{placeRepository, userRepository}
 }
 

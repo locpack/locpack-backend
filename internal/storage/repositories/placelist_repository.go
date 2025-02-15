@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"placelists/internal/storage"
 	"placelists/internal/storage/database"
 	"placelists/internal/storage/entities"
 )
@@ -9,7 +10,7 @@ type placelistRepositoryImpl struct {
 	db *database.DB
 }
 
-func NewPlacelistRepository(db *database.DB) *placelistRepositoryImpl {
+func NewPlacelistRepository(db *database.DB) storage.PlacelistRepository {
 	return &placelistRepositoryImpl{db}
 }
 

@@ -1,6 +1,7 @@
 package repositories
 
 import (
+	"placelists/internal/storage"
 	"placelists/internal/storage/database"
 	"placelists/internal/storage/entities"
 )
@@ -9,7 +10,7 @@ type userRepositoryImpl struct {
 	db *database.DB
 }
 
-func NewUserRepository(db *database.DB) *userRepositoryImpl {
+func NewUserRepository(db *database.DB) storage.UserRepository {
 	return &userRepositoryImpl{db}
 }
 
