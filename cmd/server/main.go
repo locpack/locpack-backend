@@ -2,10 +2,10 @@ package main
 
 import (
 	_ "placelists/docs/swagger"
-	"placelists/internal/server/api"
 	"placelists/internal/server/controllers"
 	"placelists/internal/service/domain"
 	"placelists/internal/storage/repositories"
+	"placelists/pkg/api"
 	"placelists/pkg/database"
 )
 

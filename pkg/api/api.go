@@ -43,10 +43,18 @@ func New(controller *server.Controller) *gin.Engine {
 	return g
 }
 
-func Response(ctx *gin.Context, statusCode int, data any, errors []dtos.Error) {
+func SuccessResponse(ctx *gin.Context, statusCode int, data any) {
 	ctx.JSON(statusCode, dtos.ResponseWrapper[any]{
 		Data:   data,
-		Meta:   dtos.Meta{Success: len(errors) == 0},
+		Meta:   dtos.Meta{Success: true},
+		Errors: []dtos.Error{},
+	})
+}
+
+func ErrorResponse(ctx *gin.Context, statusCode int, errors []dtos.Error) {
+	ctx.JSON(statusCode, dtos.ResponseWrapper[any]{
+		Data:   nil,
+		Meta:   dtos.Meta{Success: false},
 		Errors: errors,
 	})
 }

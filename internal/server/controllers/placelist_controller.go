@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 	"placelists/internal/server"
-	"placelists/internal/server/api"
 	"placelists/internal/server/dtos"
 	"placelists/internal/service"
 	"placelists/internal/service/models"
+	"placelists/pkg/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -24,35 +24,35 @@ func (c *placelistControllerImpl) GetPlacelistsByQuery(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	query := ctx.Query("query")
 	if len(query) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelists, err := c.service.GetByNameOrAuthor(query, userID)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistsDTOs := []dtos.Placelist{}
 	copier.Copy(&placelists, &placelistsDTOs)
 
-	api.Response(ctx, http.StatusOK, placelistsDTOs, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, placelistsDTOs)
 }
 
 func (c *placelistControllerImpl) PostPlacelist(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
@@ -60,7 +60,7 @@ func (c *placelistControllerImpl) PostPlacelist(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&placelistCreateDTO)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
@@ -70,98 +70,98 @@ func (c *placelistControllerImpl) PostPlacelist(ctx *gin.Context) {
 	placelist, err := c.service.Create(userID, placelistCreate)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistDTO := dtos.Placelist{}
 	copier.Copy(&placelist, &placelistDTO)
 
-	api.Response(ctx, http.StatusOK, placelistDTO, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, placelistDTO)
 }
 
 func (c *placelistControllerImpl) GetPlacelistsFollowed(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelists, err := c.service.GetFollowedByUserID(userID)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistsDTOs := dtos.Placelist{}
 	copier.Copy(&placelists, &placelistsDTOs)
 
-	api.Response(ctx, http.StatusOK, placelistsDTOs, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, placelistsDTOs)
 }
 
 func (c *placelistControllerImpl) GetPlacelistsCreated(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelists, err := c.service.GetCreatedByUserID(userID)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, []dtos.Placelist{}, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistsDTOs := []dtos.Placelist{}
 	copier.Copy(&placelists, &placelistsDTOs)
 
-	api.Response(ctx, http.StatusOK, placelistsDTOs, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, placelistsDTOs)
 }
 
 func (c *placelistControllerImpl) GetPlacelistByID(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistID := ctx.Param("id")
 	if len(placelistID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelist, err := c.service.GetByID(placelistID, userID)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistDTO := dtos.Placelist{}
 	copier.Copy(&placelist, &placelistDTO)
 
-	api.Response(ctx, http.StatusOK, placelistDTO, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, placelistDTO)
 }
 
 func (c *placelistControllerImpl) PutPlacelistByID(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistID := ctx.Param("id")
 	if len(placelistID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
@@ -169,7 +169,7 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&placelistUpdateDTO)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
@@ -179,12 +179,12 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx *gin.Context) {
 	placelist, err := c.service.UpdateByID(placelistID, userID, placelistUpdate)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	placelistDTO := dtos.Placelist{}
 	copier.Copy(&placelist, &placelistDTO)
 
-	api.Response(ctx, http.StatusOK, placelistDTO, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, placelistDTO)
 }

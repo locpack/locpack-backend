@@ -3,10 +3,10 @@ package controllers
 import (
 	"net/http"
 	"placelists/internal/server"
-	"placelists/internal/server/api"
 	"placelists/internal/server/dtos"
 	"placelists/internal/service"
 	"placelists/internal/service/models"
+	"placelists/pkg/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"
@@ -29,21 +29,21 @@ func (c *userControllerImpl) GetUserMy(ctx *gin.Context) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	user, err := c.service.GetByID(userID)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	userDTO := dtos.User{}
 	copier.Copy(&user, &userDTO)
 
-	api.Response(ctx, http.StatusOK, userDTO, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, userDTO)
 }
 
 func (c *userControllerImpl) GetUserByID(ctx *gin.Context) {
@@ -52,14 +52,14 @@ func (c *userControllerImpl) GetUserByID(ctx *gin.Context) {
 	user, err := c.service.GetByID(userID)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	userDTO := dtos.User{}
 	copier.Copy(&user, &userDTO)
 
-	api.Response(ctx, http.StatusOK, userDTO, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, userDTO)
 }
 
 func (c *userControllerImpl) PutUserByID(ctx *gin.Context) {
@@ -69,7 +69,7 @@ func (c *userControllerImpl) PutUserByID(ctx *gin.Context) {
 	err := ctx.ShouldBindJSON(&userUpdateDTO)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
@@ -79,12 +79,12 @@ func (c *userControllerImpl) PutUserByID(ctx *gin.Context) {
 	user, err := c.service.UpdateByID(userID, userUpdate)
 	if err != nil {
 		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
-		api.Response(ctx, http.StatusBadRequest, nil, errors)
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
 		return
 	}
 
 	userDTO := dtos.User{}
 	copier.Copy(&user, &userDTO)
 
-	api.Response(ctx, http.StatusOK, userDTO, []dtos.Error{})
+	api.SuccessResponse(ctx, http.StatusOK, userDTO)
 }
