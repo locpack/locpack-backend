@@ -37,7 +37,7 @@ func (s *placeServiceImpl) GetByID(placeID string, userID string) (models.Place,
 	}
 
 	place := models.Place{}
-	copier.Copy(&placeEntity, &place)
+	err = copier.Copy(&placeEntity, &place)
 	if err != nil {
 		return models.Place{}, err
 	}
