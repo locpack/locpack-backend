@@ -41,7 +41,12 @@ func (c *userControllerImpl) GetUserMy(ctx *gin.Context) {
 	}
 
 	userDTO := dtos.User{}
-	copier.Copy(&user, &userDTO)
+	err = copier.Copy(&user, &userDTO)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, userDTO)
 }
@@ -57,7 +62,12 @@ func (c *userControllerImpl) GetUserByID(ctx *gin.Context) {
 	}
 
 	userDTO := dtos.User{}
-	copier.Copy(&user, &userDTO)
+	err = copier.Copy(&user, &userDTO)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, userDTO)
 }
@@ -74,7 +84,12 @@ func (c *userControllerImpl) PutUserByID(ctx *gin.Context) {
 	}
 
 	userUpdate := models.UserUpdate{}
-	copier.Copy(&userUpdateDTO, &userUpdate)
+	err = copier.Copy(&userUpdateDTO, &userUpdate)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	user, err := c.service.UpdateByID(userID, userUpdate)
 	if err != nil {
@@ -84,7 +99,12 @@ func (c *userControllerImpl) PutUserByID(ctx *gin.Context) {
 	}
 
 	userDTO := dtos.User{}
-	copier.Copy(&user, &userDTO)
+	err = copier.Copy(&user, &userDTO)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, userDTO)
 }

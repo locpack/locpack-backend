@@ -43,7 +43,12 @@ func (c *placeControllerImpl) GetPlacesByQuery(ctx *gin.Context) {
 	}
 
 	placesDTOs := []dtos.Place{}
-	copier.Copy(&places, &placesDTOs)
+	err = copier.Copy(&places, &placesDTOs)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, placesDTOs)
 }
@@ -65,7 +70,12 @@ func (c *placeControllerImpl) PostPlace(ctx *gin.Context) {
 	}
 
 	placeCreate := models.PlaceCreate{}
-	copier.Copy(&placeCreateDTO, &placeCreate)
+	err = copier.Copy(&placeCreateDTO, &placeCreate)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	place, err := c.service.Create(userID, placeCreate)
 	if err != nil {
@@ -75,7 +85,12 @@ func (c *placeControllerImpl) PostPlace(ctx *gin.Context) {
 	}
 
 	placeDTO := dtos.Place{}
-	copier.Copy(&place, &placeDTO)
+	err = copier.Copy(&place, &placeDTO)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, placeDTO)
 }
@@ -103,7 +118,12 @@ func (c *placeControllerImpl) GetPlaceByID(ctx *gin.Context) {
 	}
 
 	placeDTO := dtos.Place{}
-	copier.Copy(&place, &placeDTO)
+	err = copier.Copy(&place, &placeDTO)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, placeDTO)
 }
@@ -132,7 +152,12 @@ func (c *placeControllerImpl) PutPlaceByID(ctx *gin.Context) {
 	}
 
 	placeUpdate := models.PlaceUpdate{}
-	copier.Copy(&placeUpdateDTO, &placeUpdate)
+	err = copier.Copy(&placeUpdateDTO, &placeUpdate)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	place, err := c.service.UpdateByID(placeID, userID, placeUpdate)
 	if err != nil {
@@ -142,7 +167,12 @@ func (c *placeControllerImpl) PutPlaceByID(ctx *gin.Context) {
 	}
 
 	placeDTO := dtos.Place{}
-	copier.Copy(&place, &placeDTO)
+	err = copier.Copy(&place, &placeDTO)
+	if err != nil {
+		errors := []dtos.Error{{Message: "Some error", Code: "000"}}
+		api.ErrorResponse(ctx, http.StatusBadRequest, errors)
+		return
+	}
 
 	api.SuccessResponse(ctx, http.StatusOK, placeDTO)
 }

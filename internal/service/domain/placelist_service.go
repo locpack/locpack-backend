@@ -157,7 +157,10 @@ func (s *placelistServiceImpl) GetPlacesByID(placelistID string, userID string) 
 		}
 
 		place := models.Place{}
-		copier.Copy(&placeEntity, &place)
+		err = copier.Copy(&placeEntity, &place)
+		if err != nil {
+			return []models.Place{}, err
+		}
 		place.Visited = visited
 
 		foundPlaces = append(foundPlaces, place)
@@ -185,7 +188,10 @@ func (s *placelistServiceImpl) Create(userID string, pc models.PlacelistCreate) 
 	}
 
 	placelist := models.Placelist{}
-	copier.Copy(&placelistEntity, &placelist)
+	err = copier.Copy(&placelistEntity, &placelist)
+	if err != nil {
+		return models.Placelist{}, err
+	}
 
 	return placelist, err
 }
@@ -234,7 +240,10 @@ func (s *placelistServiceImpl) UpdateByID(placelistID string, userID string, pu 
 	}
 
 	placelist := models.Placelist{}
-	copier.Copy(&placelistEntity, &placelist)
+	err = copier.Copy(&placelistEntity, &placelist)
+	if err != nil {
+		return models.Placelist{}, err
+	}
 
 	return placelist, err
 }

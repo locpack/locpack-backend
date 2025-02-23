@@ -21,5 +21,9 @@ func main() {
 	s := domain.NewService(r)
 	c := controllers.NewController(s)
 	api := api.New(c)
-	api.Run("localhost:8082")
+
+	err := api.Run("localhost:8082")
+	if err != nil {
+		return
+	}
 }
