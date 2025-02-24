@@ -1,15 +1,23 @@
-FROM golang:1.24-alpine3.21 AS build-env
+FROM golang:1.23.3 AS build-stage
 
-ENV GOBIN=/bin/apps/
+WORKDIR /app
 
-COPY go.mod go.sum .
+COPY go.mod go.sum ./
 RUN go mod download
 
-COPY . . 
-RUN go install -v ./cmd/...
+COPY *.go ./
 
-FROM alpine:3.21
-COPY --from=build-env /bin/apps/ /apps
+RUN CGO_ENABLED=0 GOOS=linux go build -o /cmd/server
 
-WORKDIR /apps/
-ENV PATH="/apps:${PATH}"
+
+FROM gcr.io/distroless/base-debian11 AS build-release-stage
+
+WORKDIR /
+
+COPY --from=build-stage /cmd/server /cmd/server
+
+EXPOSE 8082
+
+USER admin:admin
+
+ENTRYPOINT ["/cmd/server"]
