@@ -2,11 +2,11 @@ package domain
 
 import (
 	"errors"
-	"placelists/internal/service"
-	"placelists/internal/service/models"
-	"placelists/internal/storage"
-	"placelists/internal/storage/entities"
-	"placelists/pkg/rdg"
+	"placelists-back/internal/service"
+	"placelists-back/internal/service/models"
+	"placelists-back/internal/storage"
+	"placelists-back/internal/storage/entities"
+	"placelists-back/pkg/rdg"
 
 	"github.com/jinzhu/copier"
 )

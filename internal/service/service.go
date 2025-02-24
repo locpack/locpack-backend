@@ -1,6 +1,6 @@
 package service
 
-import "placelists/internal/service/models"
+import "placelists-back/internal/service/models"
 
 type Service struct {
 	Place     PlaceService

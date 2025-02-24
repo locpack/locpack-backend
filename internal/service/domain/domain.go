@@ -1,8 +1,8 @@
 package domain
 
 import (
-	"placelists/internal/service"
-	"placelists/internal/storage"
+	"placelists-back/internal/service"
+	"placelists-back/internal/storage"
 )
 
 func NewService(repository *storage.Repository) *service.Service {

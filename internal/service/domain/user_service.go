@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"placelists/internal/service"
-	"placelists/internal/service/models"
-	"placelists/internal/storage"
+	"placelists-back/internal/service"
+	"placelists-back/internal/service/models"
+	"placelists-back/internal/storage"
 
 	"github.com/jinzhu/copier"
 )

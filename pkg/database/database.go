@@ -1,7 +1,7 @@
 package database
 
 import (
-	"placelists/internal/storage/entities"
+	"placelists-back/internal/storage/entities"
 
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"

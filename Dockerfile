@@ -2,21 +2,16 @@ FROM golang:1.23.3 AS build-stage
 
 WORKDIR /app
 
-COPY go.mod go.sum ./
-
-RUN go mod download
-
 COPY . .
 
-# Change CGO_ENABLED on 0 when no sqlite3 drive
-RUN CGO_ENABLED=1 GOOS=linux go build -o /placelists-back ./cmd/server
+RUN go mod download
+RUN CGO_ENABLED=1 GOOS=linux go build -o build cmd/server/main.go
 
 
-# FROM gcr.io/distroless/base-debian11 AS build-release-stage
-FROM golang:1.23.3 AS build-release-stage
+FROM ubuntu AS release-stage
 
-COPY --from=build-stage /placelists-back /placelists-back
+WORKDIR /
 
-EXPOSE 8082
+COPY --from=build-stage /app/build /build
 
-CMD ["/placelists-back"]
+ENTRYPOINT ["/build/main"]

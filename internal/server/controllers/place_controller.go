@@ -2,11 +2,11 @@ package controllers
 
 import (
 	"net/http"
-	"placelists/internal/server"
-	"placelists/internal/server/dtos"
-	"placelists/internal/service"
-	"placelists/internal/service/models"
-	"placelists/pkg/api"
+	"placelists-back/internal/server"
+	"placelists-back/internal/server/dtos"
+	"placelists-back/internal/service"
+	"placelists-back/internal/service/models"
+	"placelists-back/pkg/api"
 
 	"github.com/gin-gonic/gin"
 	"github.com/jinzhu/copier"

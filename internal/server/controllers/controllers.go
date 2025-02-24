@@ -1,8 +1,8 @@
 package controllers
 
 import (
-	"placelists/internal/server"
-	"placelists/internal/service"
+	"placelists-back/internal/server"
+	"placelists-back/internal/service"
 )
 
 func NewController(service *service.Service) *server.Controller {

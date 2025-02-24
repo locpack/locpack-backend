@@ -1,8 +1,8 @@
 package api
 
 import (
-	"placelists/internal/server"
-	"placelists/internal/server/dtos"
+	"placelists-back/internal/server"
+	"placelists-back/internal/server/dtos"
 
 	"github.com/gin-gonic/gin"
 	swaggerFiles "github.com/swaggo/files"

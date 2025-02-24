@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"placelists/internal/storage/entities"
+	"placelists-back/internal/storage/entities"
 )
 
 type Repository struct {

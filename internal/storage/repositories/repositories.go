@@ -1,8 +1,8 @@
 package repositories
 
 import (
-	"placelists/internal/storage"
-	"placelists/pkg/database"
+	"placelists-back/internal/storage"
+	"placelists-back/pkg/database"
 )
 
 func NewRepository(db *database.DB) *storage.Repository {

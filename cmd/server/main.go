@@ -1,17 +1,17 @@
 package main
 
 import (
-	_ "placelists/docs/swagger"
-	"placelists/internal/server/controllers"
-	"placelists/internal/service/domain"
-	"placelists/internal/storage/repositories"
-	"placelists/pkg/api"
-	"placelists/pkg/database"
+	_ "placelists-back/docs/swagger"
+	"placelists-back/internal/server/controllers"
+	"placelists-back/internal/service/domain"
+	"placelists-back/internal/storage/repositories"
+	"placelists-back/pkg/api"
+	"placelists-back/pkg/database"
 )
 
 // @title Placelists
 // @version 1.1
-// @host localhost:8082
+// @host 0.0.0.0:8080
 // @BasePath /api
 
 func main() {
@@ -22,7 +22,7 @@ func main() {
 	c := controllers.NewController(s)
 	api := api.New(c)
 
-	err := api.Run("localhost:8082")
+	err := api.Run("0.0.0.0:8080")
 	if err != nil {
 		return
 	}
