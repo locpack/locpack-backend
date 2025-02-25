@@ -14,4 +14,6 @@ WORKDIR /
 
 COPY --from=build-stage /app/build /build
 
+RUN chmod +x /build/main
+
 ENTRYPOINT ["/build/main"]
