@@ -59,19 +59,13 @@ jobs:
     if: github.ref == 'refs/heads/main'
     steps:
       - uses: actions/checkout@v4
-      - name: Install SSH key
-        uses: webfactory/ssh-agent@v0.9.0
+      - name: Executing remote ssh commands using ssh key
+        uses: appleboy/ssh-action@v1.2.1
         with:
-          ssh-private-key: ${{ secrets.SSH_PRIVATE_KEY }}
-      - name: Connect to server and deploy container
-        env:
-          SSH_HOST: ${{ secrets.SSH_HOST }}
-          SSH_USER: ${{ secrets.SSH_USER }}
-          IMAGE_NAME: ghcr.io/${{ github.repository }}:${{ github.sha }}
-        run: |
-          ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
-            sudo docker rm -vf $(docker ps -aq)
-            sudo docker rmi -f $(docker images -aq)
+          host: ${{ secrets.SSH_HOST }}
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            sudo docker system prune
             sudo docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
-            sudo docker run --name placelists-back -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.sha }}
-          EOF
+            sudo docker run -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.sha }}
