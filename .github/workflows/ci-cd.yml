@@ -70,8 +70,8 @@ jobs:
           IMAGE_NAME: ghcr.io/${{ github.repository }}:${{ github.sha }}
         run: |
           ssh -o StrictHostKeyChecking=no $SSH_USER@$SSH_HOST << 'EOF'
-          sudo docker rm -vf $(docker ps -aq)
-          sudo docker rmi -f $(docker images -aq)
-          sudo docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
-          sudo docker run --name placelists-back -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.sha }}
+            sudo docker rm -vf $(docker ps -aq)
+            sudo docker rmi -f $(docker images -aq)
+            sudo docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
+            sudo docker run --name placelists-back -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.sha }}
           EOF
