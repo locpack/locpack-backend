@@ -66,6 +66,6 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo docker system prune
+            sudo docker system prune -f
             sudo docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
             sudo docker run -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.sha }}
