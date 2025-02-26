@@ -11,7 +11,6 @@ FROM gcr.io/distroless/base-debian11 AS release-stage
 
 WORKDIR /
 
-RUN mkdir -p build
-COPY --from=build-stage /app/build build
+COPY --from=build-stage /app/build /home
 
-ENTRYPOINT ["/build/main"]
+ENTRYPOINT ["/home/main"]
