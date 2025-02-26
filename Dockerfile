@@ -5,14 +5,13 @@ WORKDIR /app
 COPY . .
 
 RUN go mod download
-RUN mkdir -p ./build
-RUN CGO_ENABLED=1 GOOS=linux go build -o ./build cmd/server/main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -o build cmd/server/main.go
 
 FROM ubuntu AS release-stage
 
 WORKDIR /
 
-RUN mkdir -p /build
-COPY --from=build-stage /app/build /build
+RUN mkdir -p build
+COPY --from=build-stage /app/build build
 
-ENTRYPOINT ["/build/main"]
+ENTRYPOINT ["build/main"]
