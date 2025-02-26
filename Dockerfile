@@ -8,7 +8,6 @@ RUN go mod download
 RUN mkdir -p ./build
 RUN CGO_ENABLED=1 GOOS=linux go build -o ./build cmd/server/main.go
 
-
 FROM ubuntu AS release-stage
 
 WORKDIR /
