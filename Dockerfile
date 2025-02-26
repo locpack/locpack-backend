@@ -1,18 +1,14 @@
-FROM golang:1.23.3 AS build-stage
+FROM golang:1.23.3-bullseye AS build-stage
 
 WORKDIR /app
 
 COPY . .
 
 RUN go mod download
-RUN CGO_ENABLED=1 GOOS=linux go build -o build cmd/server/main.go
+RUN CGO_ENABLED=1 GOOS=linux go build -o . cmd/server/main.go
 
 FROM ubuntu AS release-stage
 
-WORKDIR /
+COPY --from=build-stage /app/main .
 
-RUN mkdir -p /build
-
-COPY --from=build-stage /app/build /build
-
-ENTRYPOINT ["/build/main"]
+ENTRYPOINT ["./main"]
