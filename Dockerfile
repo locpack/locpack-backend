@@ -5,6 +5,7 @@ WORKDIR /app
 COPY . .
 
 RUN go mod download
+# CGO_ENABLED=0 when no sqlite
 RUN CGO_ENABLED=1 GOOS=linux go build -o . cmd/server/main.go
 
 FROM ubuntu AS release-stage
