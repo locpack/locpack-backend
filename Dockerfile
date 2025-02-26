@@ -7,7 +7,7 @@ COPY . .
 RUN go mod download
 RUN CGO_ENABLED=1 GOOS=linux go build -o build cmd/server/main.go
 
-FROM gcr.io/distroless/base-debian11 AS release-stage
+FROM ubuntu AS release-stage
 
 WORKDIR /
 
