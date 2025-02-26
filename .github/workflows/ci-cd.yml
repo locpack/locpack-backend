@@ -66,7 +66,7 @@ jobs:
           username: ${{ secrets.SSH_USER }}
           key: ${{ secrets.SSH_PRIVATE_KEY }}
           script: |
-            sudo docker rm -f `docker container ps -qa`
-            sudo docker rmi -f `docker images -aq`
+            sudo docker rm -f `sudo docker container ps -qa`
+            sudo docker rmi -f `sudo docker images -aq`
             sudo docker pull ghcr.io/${{ github.repository }}:${{ github.sha }}
             sudo docker run -d -p 8080:8080 ghcr.io/${{ github.repository }}:${{ github.sha }}
