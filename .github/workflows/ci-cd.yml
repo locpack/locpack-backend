@@ -38,6 +38,10 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
+      - name: Get short SHA
+        id: vars
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
+
       - name: Build Docker image
         run: docker build -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }} .
 
@@ -52,7 +56,9 @@ jobs:
 
   build:
     name: Build
-    needs: lint
+    needs:
+      - lint
+      - security-scan
     runs-on: ubuntu-24.04
     if: github.ref == 'refs/heads/main'
     steps:
