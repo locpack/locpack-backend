@@ -46,7 +46,7 @@ jobs:
         with:
           image-ref: ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }}
           format: table
-          exit-code: "1"
+          exit-code: 1
           severity: CRITICAL,HIGH
           ignore-unfixed: true
 
