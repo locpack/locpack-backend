@@ -43,14 +43,14 @@ func main() {
 	placelistController := controller.NewPlacelistController(placelistService)
 	userController := controller.NewUserController(userService)
 
-	api := api.New(&config.API)
+	a := api.New(&config.API)
 
-	router.NewPlaceRouter(api, placeController)
-	router.NewPlacelistRouter(api, placelistController)
-	router.NewUserRouter(api, userController)
-	router.NewSwaggerRouter(api)
+	router.NewPlaceRouter(a, placeController)
+	router.NewPlacelistRouter(a, placelistController)
+	router.NewUserRouter(a, userController)
+	router.NewSwaggerRouter(a)
 
-	err = api.Run(config.API.Address)
+	err = a.Run(config.API.Address)
 	if err != nil {
 		panic(err)
 	}
