@@ -2,7 +2,7 @@ package domain
 
 import (
 	"placelists-back/internal/service"
-	"placelists-back/internal/service/models"
+	"placelists-back/internal/service/model"
 	"placelists-back/internal/storage"
 
 	"github.com/jinzhu/copier"
@@ -16,25 +16,25 @@ func NewUserService(repository storage.UserRepository) service.UserService {
 	return &userServiceImpl{repository}
 }
 
-func (s *userServiceImpl) GetByID(id string) (models.User, error) {
+func (s *userServiceImpl) GetByID(id string) (model.User, error) {
 	userEntity, err := s.repository.GetByPublicID(id)
 	if err != nil {
-		return models.User{}, err
+		return model.User{}, err
 	}
 
-	user := models.User{}
+	user := model.User{}
 	err = copier.Copy(&userEntity, &user)
 	if err != nil {
-		return models.User{}, err
+		return model.User{}, err
 	}
 
 	return user, err
 }
 
-func (s *userServiceImpl) UpdateByID(id string, uu models.UserUpdate) (models.User, error) {
+func (s *userServiceImpl) UpdateByID(id string, uu model.UserUpdate) (model.User, error) {
 	userEntity, err := s.repository.GetByPublicID(id)
 	if err != nil {
-		return models.User{}, err
+		return model.User{}, err
 	}
 
 	userEntity.Username = uu.Username
@@ -42,13 +42,13 @@ func (s *userServiceImpl) UpdateByID(id string, uu models.UserUpdate) (models.Us
 
 	err = s.repository.Update(userEntity)
 	if err != nil {
-		return models.User{}, err
+		return model.User{}, err
 	}
 
-	user := models.User{}
+	user := model.User{}
 	err = copier.Copy(&userEntity, &user)
 	if err != nil {
-		return models.User{}, err
+		return model.User{}, err
 	}
 
 	return user, err

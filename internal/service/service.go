@@ -1,31 +1,25 @@
 package service
 
-import "placelists-back/internal/service/models"
-
-type Service struct {
-	Place     PlaceService
-	Placelist PlacelistService
-	User      UserService
-}
+import "placelists-back/internal/service/model"
 
 type PlaceService interface {
-	GetByID(placeID string, userID string) (models.Place, error)
-	GetByNameOrAddress(query string, userID string) ([]models.Place, error)
-	Create(userID string, pc models.PlaceCreate) (models.Place, error)
-	UpdateByID(placeID string, userID string, pu models.PlaceUpdate) (models.Place, error)
+	GetByID(placeID string, userID string) (model.Place, error)
+	GetByNameOrAddress(query string, userID string) ([]model.Place, error)
+	Create(userID string, pc model.PlaceCreate) (model.Place, error)
+	UpdateByID(placeID string, userID string, pu model.PlaceUpdate) (model.Place, error)
 }
 
 type PlacelistService interface {
-	GetByID(placelistID string, userID string) (models.Placelist, error)
-	GetByNameOrAuthor(query string, userID string) ([]models.Placelist, error)
-	GetFollowedByUserID(userID string) ([]models.Placelist, error)
-	GetCreatedByUserID(userID string) ([]models.Placelist, error)
-	GetPlacesByID(placelistID string, userID string) ([]models.Place, error)
-	Create(userID string, pc models.PlacelistCreate) (models.Placelist, error)
-	UpdateByID(placelistID string, userID string, pu models.PlacelistUpdate) (models.Placelist, error)
+	GetByID(placelistID string, userID string) (model.Placelist, error)
+	GetByNameOrAuthor(query string, userID string) ([]model.Placelist, error)
+	GetFollowedByUserID(userID string) ([]model.Placelist, error)
+	GetCreatedByUserID(userID string) ([]model.Placelist, error)
+	GetPlacesByID(placelistID string, userID string) ([]model.Place, error)
+	Create(userID string, pc model.PlacelistCreate) (model.Placelist, error)
+	UpdateByID(placelistID string, userID string, pu model.PlacelistUpdate) (model.Placelist, error)
 }
 
 type UserService interface {
-	GetByID(id string) (models.User, error)
-	UpdateByID(id string, uu models.UserUpdate) (models.User, error)
+	GetByID(id string) (model.User, error)
+	UpdateByID(id string, uu model.UserUpdate) (model.User, error)
 }

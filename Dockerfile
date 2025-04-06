@@ -1,15 +1,18 @@
-FROM golang:1.23.3-bullseye AS build-stage
+FROM golang:1.23.3-alpine AS build-stage
 
-WORKDIR /app
+WORKDIR /goman/
+
+COPY go.mod go.sum ./
+RUN go mod download
 
 COPY . .
 
-RUN go mod download
-# CGO_ENABLED=0 when no sqlite
-RUN CGO_ENABLED=1 GOOS=linux go build -o . cmd/server/main.go
+ENV GOBIN=/goman/
+ENV GOOS=linux
+ENV GOARCH=amd64
 
-FROM ubuntu AS release-stage
+RUN go install -v -a -tags netgo -ldflags='-w' ./cmd/...
 
-COPY --from=build-stage /app/main .
+FROM alpine:3.17 AS release-stage
 
-ENTRYPOINT ["./main"]
+COPY --from=build-stage /goman/ .

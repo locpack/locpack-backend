@@ -1,0 +1,31 @@
+name: placelists
+
+services:
+  database:
+    image: postgres:17
+    container_name: database
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres -d postgres" ]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: postgres
+
+  backend:
+    container_name: backend
+    build: .
+    entrypoint: /placelists-back
+    ports:
+      - "8080:8080"
+    depends_on:
+      database:
+        condition: service_healthy
+    environment:
+      PS_DATABASE_DSN: "host=database user=postgres password=postgres dbname=postgres port=5432"
+      PS_API_ADDRESS: 0.0.0.0:8080

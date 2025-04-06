@@ -1,34 +1,28 @@
 package storage
 
 import (
-	"placelists-back/internal/storage/entities"
+	"placelists-back/internal/storage/entity"
 )
 
-type Repository struct {
-	Place     PlaceRepository
-	Placelist PlacelistRepository
-	User      UserRepository
-}
-
 type PlaceRepository interface {
-	GetByPublicID(placeID string) (entities.Place, error)
-	GetByPublicIDFull(placeID string) (entities.Place, error)
-	GetByNameOrAddress(query string) ([]entities.Place, error)
-	GetByNameOrAddressFull(query string) ([]entities.Place, error)
-	Create(p entities.Place) error
-	Update(p entities.Place) error
+	GetByPublicID(placeID string) (entity.Place, error)
+	GetByPublicIDFull(placeID string) (entity.Place, error)
+	GetByNameOrAddress(query string) ([]entity.Place, error)
+	GetByNameOrAddressFull(query string) ([]entity.Place, error)
+	Create(p entity.Place) error
+	Update(p entity.Place) error
 }
 
 type PlacelistRepository interface {
-	GetByPublicIDFull(id string) (entities.Placelist, error)
-	GetByNameOrAuthorFull(query string) ([]entities.Placelist, error)
-	Create(p entities.Placelist) error
-	Update(p entities.Placelist) error
+	GetByPublicIDFull(id string) (entity.Placelist, error)
+	GetByNameOrAuthorFull(query string) ([]entity.Placelist, error)
+	Create(p entity.Placelist) error
+	Update(p entity.Placelist) error
 }
 
 type UserRepository interface {
-	GetByPublicID(id string) (entities.User, error)
-	GetByPublicIDFull(id string) (entities.User, error)
-	Create(u entities.User) error
-	Update(u entities.User) error
+	GetByPublicID(id string) (entity.User, error)
+	GetByPublicIDFull(id string) (entity.User, error)
+	Create(u entity.User) error
+	Update(u entity.User) error
 }
