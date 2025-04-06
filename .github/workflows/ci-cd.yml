@@ -48,11 +48,11 @@ jobs:
           password: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Get short SHA
-        id: short-sha
-        run: id=$(echo ${{ github.sha }} | cut -c 1-8)
+        id: vars
+        run: echo "short_sha=$(git rev-parse --short HEAD)" >> $GITHUB_OUTPUT
 
       - name: Build Docker Image
-        run: docker build -t ghcr.io/${{ github.repository }}:${{ steps.short-sha.outputs.id }} .
+        run: docker build -t ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }} .
 
       - name: Push Docker Image to Github Container Registry
-        run: docker push ghcr.io/${{ github.repository }}:${{ steps.short-sha.outputs.id }}
+        run: docker push ghcr.io/${{ github.repository }}:${{ steps.vars.outputs.short_sha }}
