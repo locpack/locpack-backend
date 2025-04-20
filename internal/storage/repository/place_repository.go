@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"placelists-back/internal/storage"
-	"placelists-back/internal/storage/entity"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/storage"
+	"locpack-backend/internal/storage/entity"
+	"locpack-backend/pkg/adapter"
 )
 
 type placeRepositoryImpl struct {

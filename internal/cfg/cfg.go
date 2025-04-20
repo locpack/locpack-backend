@@ -1,10 +1,10 @@
 package cfg
 
 import (
-	"placelists-back/pkg/cfg"
+	"locpack-backend/pkg/cfg"
 )
 
 type Cfg struct {
-	Database cfg.Database `env-prefix:"PS_DATABASE_"`
-	API      cfg.API      `env-prefix:"PS_API_"`
+	Database cfg.Database `env-prefix:"LP_DATABASE_"`
+	API      cfg.API      `env-prefix:"LP_API_"`
 }

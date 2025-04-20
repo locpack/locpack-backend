@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/copier"
-	"placelists-back/internal/server"
-	"placelists-back/internal/server/dto"
-	"placelists-back/internal/service"
-	"placelists-back/internal/service/model"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/server"
+	"locpack-backend/internal/server/dto"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
+	"locpack-backend/pkg/adapter"
 )
 
 type userControllerImpl struct {
@@ -22,7 +22,7 @@ func NewUserController(service service.UserService) server.UserController {
 // GetUserMy
 // @Summary Get current user info
 // @Description Get information about the currently authenticated user
-// @Tags users
+// @Tags Users
 // @Security BearerAuth
 // @Success 200 {object} dto.ResponseWrapper{data=dto.User}
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.User}
@@ -32,7 +32,6 @@ func (c *userControllerImpl) GetUserMy(ctx adapter.APIContext) {
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -43,7 +42,6 @@ func (c *userControllerImpl) GetUserMy(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -51,11 +49,10 @@ func (c *userControllerImpl) GetUserMy(ctx adapter.APIContext) {
 	}
 
 	userDTO := dto.User{}
-	err = copier.Copy(&user, &userDTO)
+	err = copier.Copy(&userDTO, &user)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -63,16 +60,15 @@ func (c *userControllerImpl) GetUserMy(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   userDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: userDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
 // GetUserByID
 // @Summary Get user by ID
 // @Description Get information about any user by their ID
-// @Tags users
+// @Tags Users
 // @Param id path string true "User ID"
 // @Success 200 {object} dto.ResponseWrapper{data=dto.User}
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.User}
@@ -84,7 +80,6 @@ func (c *userControllerImpl) GetUserByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -92,11 +87,10 @@ func (c *userControllerImpl) GetUserByID(ctx adapter.APIContext) {
 	}
 
 	userDTO := dto.User{}
-	err = copier.Copy(&user, &userDTO)
+	err = copier.Copy(&userDTO, &user)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -104,16 +98,15 @@ func (c *userControllerImpl) GetUserByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   userDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: userDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
 // PutUserByID
 // @Summary Update user by ID
 // @Description Update user information
-// @Tags users
+// @Tags Users
 // @Param id path string true "User ID"
 // @Param user body dto.UserUpdate true "User data"
 // @Success 200 {object} dto.ResponseWrapper{data=dto.User}
@@ -127,7 +120,6 @@ func (c *userControllerImpl) PutUserByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -139,7 +131,6 @@ func (c *userControllerImpl) PutUserByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -150,7 +141,6 @@ func (c *userControllerImpl) PutUserByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -158,11 +148,10 @@ func (c *userControllerImpl) PutUserByID(ctx adapter.APIContext) {
 	}
 
 	userDTO := dto.User{}
-	err = copier.Copy(&user, &userDTO)
+	err = copier.Copy(&userDTO, &user)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -170,8 +159,7 @@ func (c *userControllerImpl) PutUserByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   userDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: userDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }

@@ -1,12 +1,11 @@
 package router
 
 import (
-	swaggerFiles "github.com/swaggo/files"
-	ginSwagger "github.com/swaggo/gin-swagger"
+	"locpack-backend/pkg/adapter/swagger"
 
-	"placelists-back/pkg/adapter"
+	"locpack-backend/pkg/adapter"
 )
 
 func NewSwaggerRouter(api adapter.API) {
-	api.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+	api.GET("/swagger/*any", swagger.GetHandler())
 }

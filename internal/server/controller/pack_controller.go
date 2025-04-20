@@ -4,31 +4,31 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/copier"
-	"placelists-back/internal/server"
-	"placelists-back/internal/server/dto"
-	"placelists-back/internal/service"
-	"placelists-back/internal/service/model"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/server"
+	"locpack-backend/internal/server/dto"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
+	"locpack-backend/pkg/adapter"
 )
 
-type placelistControllerImpl struct {
-	service service.PlacelistService
+type packControllerImpl struct {
+	service service.PackService
 }
 
-func NewPlacelistController(service service.PlacelistService) server.PlacelistController {
-	return &placelistControllerImpl{service}
+func NewPackController(service service.PackService) server.PackController {
+	return &packControllerImpl{service}
 }
 
-// GetPlacelistsByQuery
-// @Summary Search placelists by query
-// @Description Get placelists matching name or author
-// @Tags placelists
+// GetPacksByQuery
+// @Summary Search packs by query
+// @Description Get packs matching name or author
+// @Tags Packs
 // @Security BearerAuth
 // @Param query query string true "Search query"
-// @Success 200 {object} dto.ResponseWrapper{data=[]dto.Placelist}
-// @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Placelist}
-// @Router /api/v1/placelists [get]
-func (c *placelistControllerImpl) GetPlacelistsByQuery(ctx adapter.APIContext) {
+// @Success 200 {object} dto.ResponseWrapper{data=[]dto.Pack}
+// @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Pack}
+// @Router /api/v1/packs [get]
+func (c *packControllerImpl) GetPacksByQuery(ctx adapter.APIContext) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
@@ -51,7 +51,7 @@ func (c *placelistControllerImpl) GetPlacelistsByQuery(ctx adapter.APIContext) {
 		return
 	}
 
-	placelists, err := c.service.GetByNameOrAuthor(query, userID)
+	packs, err := c.service.GetByNameOrAuthor(query, userID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -62,8 +62,8 @@ func (c *placelistControllerImpl) GetPlacelistsByQuery(ctx adapter.APIContext) {
 		return
 	}
 
-	var placelistsDTOs []dto.Placelist
-	err = copier.Copy(&placelists, &placelistsDTOs)
+	var packsDTOs []dto.Pack
+	err = copier.Copy(&packs, &packsDTOs)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -75,22 +75,22 @@ func (c *placelistControllerImpl) GetPlacelistsByQuery(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placelistsDTOs,
+		Data:   packsDTOs,
 		Meta:   dto.Meta{Success: true},
 		Errors: nil,
 	})
 }
 
-// PostPlacelist
-// @Summary Create a new placelist
-// @Description Add a new placelist to the database
-// @Tags placelists
+// PostPack
+// @Summary Create a new pack
+// @Description Add a new pack to the database
+// @Tags Packs
 // @Security BearerAuth
-// @Param placelist body dto.PlacelistCreate true "Placelist data"
-// @Success 200 {object} dto.ResponseWrapper{data=dto.Placelist}
-// @Failure 400 {object} dto.ResponseWrapper{data=dto.Placelist}
-// @Router /api/v1/placelists [post]
-func (c *placelistControllerImpl) PostPlacelist(ctx adapter.APIContext) {
+// @Param pack body dto.PackCreate true "Pack data"
+// @Success 200 {object} dto.ResponseWrapper{data=dto.Pack}
+// @Failure 400 {object} dto.ResponseWrapper{data=dto.Pack}
+// @Router /api/v1/packs [post]
+func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
@@ -102,8 +102,8 @@ func (c *placelistControllerImpl) PostPlacelist(ctx adapter.APIContext) {
 		return
 	}
 
-	var placelistCreateDTO dto.PlacelistCreate
-	err := ctx.ShouldBindJSON(&placelistCreateDTO)
+	var packCreateDTO dto.PackCreate
+	err := ctx.ShouldBindJSON(&packCreateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -114,8 +114,8 @@ func (c *placelistControllerImpl) PostPlacelist(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistCreate := model.PlacelistCreate{}
-	err = copier.Copy(&placelistCreateDTO, &placelistCreate)
+	packCreate := model.PackCreate{}
+	err = copier.Copy(&packCreateDTO, &packCreate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -126,7 +126,7 @@ func (c *placelistControllerImpl) PostPlacelist(ctx adapter.APIContext) {
 		return
 	}
 
-	placelist, err := c.service.Create(userID, placelistCreate)
+	pack, err := c.service.Create(userID, packCreate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -137,8 +137,8 @@ func (c *placelistControllerImpl) PostPlacelist(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistDTO := dto.Placelist{}
-	err = copier.Copy(&placelist, &placelistDTO)
+	packDTO := dto.Pack{}
+	err = copier.Copy(&pack, &packDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -150,21 +150,21 @@ func (c *placelistControllerImpl) PostPlacelist(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placelistDTO,
+		Data:   packDTO,
 		Meta:   dto.Meta{Success: true},
 		Errors: nil,
 	})
 }
 
-// GetPlacelistsFollowed
-// @Summary Get followed placelists
-// @Description Get placelists followed by the current user
-// @Tags placelists
+// GetPacksFollowed
+// @Summary Get followed packs
+// @Description Get packs followed by the current user
+// @Tags Packs
 // @Security BearerAuth
-// @Success 200 {object} dto.ResponseWrapper{data=[]dto.Placelist}
-// @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Placelist}
-// @Router /api/v1/placelists/followed [get]
-func (c *placelistControllerImpl) GetPlacelistsFollowed(ctx adapter.APIContext) {
+// @Success 200 {object} dto.ResponseWrapper{data=[]dto.Pack}
+// @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Pack}
+// @Router /api/v1/packs/followed [get]
+func (c *packControllerImpl) GetPacksFollowed(ctx adapter.APIContext) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
@@ -176,7 +176,7 @@ func (c *placelistControllerImpl) GetPlacelistsFollowed(ctx adapter.APIContext) 
 		return
 	}
 
-	placelists, err := c.service.GetFollowedByUserID(userID)
+	packs, err := c.service.GetFollowedByUserID(userID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -187,8 +187,8 @@ func (c *placelistControllerImpl) GetPlacelistsFollowed(ctx adapter.APIContext) 
 		return
 	}
 
-	placelistsDTOs := dto.Placelist{}
-	err = copier.Copy(&placelists, &placelistsDTOs)
+	packsDTOs := dto.Pack{}
+	err = copier.Copy(&packs, &packsDTOs)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -200,21 +200,21 @@ func (c *placelistControllerImpl) GetPlacelistsFollowed(ctx adapter.APIContext) 
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placelistsDTOs,
+		Data:   packsDTOs,
 		Meta:   dto.Meta{Success: true},
 		Errors: nil,
 	})
 }
 
-// GetPlacelistsCreated
-// @Summary Get created placelists
-// @Description Get placelists created by the current user
-// @Tags placelists
+// GetPacksCreated
+// @Summary Get created packs
+// @Description Get packs created by the current user
+// @Tags Packs
 // @Security BearerAuth
-// @Success 200 {object} dto.ResponseWrapper{data=[]dto.Placelist}
-// @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Placelist}
-// @Router /api/v1/placelists/created [get]
-func (c *placelistControllerImpl) GetPlacelistsCreated(ctx adapter.APIContext) {
+// @Success 200 {object} dto.ResponseWrapper{data=[]dto.Pack}
+// @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Pack}
+// @Router /api/v1/packs/created [get]
+func (c *packControllerImpl) GetPacksCreated(ctx adapter.APIContext) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
@@ -226,7 +226,7 @@ func (c *placelistControllerImpl) GetPlacelistsCreated(ctx adapter.APIContext) {
 		return
 	}
 
-	placelists, err := c.service.GetCreatedByUserID(userID)
+	packs, err := c.service.GetCreatedByUserID(userID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -237,8 +237,8 @@ func (c *placelistControllerImpl) GetPlacelistsCreated(ctx adapter.APIContext) {
 		return
 	}
 
-	var placelistsDTOs []dto.Placelist
-	err = copier.Copy(&placelists, &placelistsDTOs)
+	var packsDTOs []dto.Pack
+	err = copier.Copy(&packs, &packsDTOs)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -250,22 +250,22 @@ func (c *placelistControllerImpl) GetPlacelistsCreated(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placelistsDTOs,
+		Data:   packsDTOs,
 		Meta:   dto.Meta{Success: true},
 		Errors: nil,
 	})
 }
 
-// GetPlacelistByID
-// @Summary Get placelist by ID
-// @Description Get a specific placelist by its ID
-// @Tags placelists
+// GetPackByID
+// @Summary Get pack by ID
+// @Description Get a specific pack by its ID
+// @Tags Packs
 // @Security BearerAuth
-// @Param id path string true "Placelist ID"
-// @Success 200 {object} dto.ResponseWrapper{data=dto.Placelist}
-// @Failure 400 {object} dto.ResponseWrapper{data=dto.Placelist}
-// @Router /api/v1/placelists/{id} [get]
-func (c *placelistControllerImpl) GetPlacelistByID(ctx adapter.APIContext) {
+// @Param id path string true "Pack ID"
+// @Success 200 {object} dto.ResponseWrapper{data=dto.Pack}
+// @Failure 400 {object} dto.ResponseWrapper{data=dto.Pack}
+// @Router /api/v1/packs/{id} [get]
+func (c *packControllerImpl) GetPackByID(ctx adapter.APIContext) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
@@ -277,8 +277,8 @@ func (c *placelistControllerImpl) GetPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistID := ctx.Param("id")
-	if len(placelistID) == 0 {
+	packID := ctx.Param("id")
+	if len(packID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
 			Data:   nil,
@@ -288,7 +288,7 @@ func (c *placelistControllerImpl) GetPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelist, err := c.service.GetByID(placelistID, userID)
+	pack, err := c.service.GetByID(packID, userID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -299,8 +299,8 @@ func (c *placelistControllerImpl) GetPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistDTO := dto.Placelist{}
-	err = copier.Copy(&placelist, &placelistDTO)
+	packDTO := dto.Pack{}
+	err = copier.Copy(&pack, &packDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -312,23 +312,23 @@ func (c *placelistControllerImpl) GetPlacelistByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placelistDTO,
+		Data:   packDTO,
 		Meta:   dto.Meta{Success: true},
 		Errors: nil,
 	})
 }
 
-// PutPlacelistByID
-// @Summary Update placelist by ID
-// @Description Update a specific placelist by its ID
-// @Tags placelists
+// PutPackByID
+// @Summary Update pack by ID
+// @Description Update a specific pack by its ID
+// @Tags Packs
 // @Security BearerAuth
-// @Param id path string true "Placelist ID"
-// @Param placelist body dto.PlacelistUpdate true "Placelist data"
-// @Success 200 {object} dto.ResponseWrapper{data=dto.Placelist}
-// @Failure 400 {object} dto.ResponseWrapper{data=dto.Placelist}
-// @Router /api/v1/placelists/{id} [put]
-func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
+// @Param id path string true "Pack ID"
+// @Param pack body dto.PackUpdate true "Pack data"
+// @Success 200 {object} dto.ResponseWrapper{data=dto.Pack}
+// @Failure 400 {object} dto.ResponseWrapper{data=dto.Pack}
+// @Router /api/v1/packs/{id} [put]
+func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	userID := ctx.GetString("userID")
 	if len(userID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
@@ -340,8 +340,8 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistID := ctx.Param("id")
-	if len(placelistID) == 0 {
+	packID := ctx.Param("id")
+	if len(packID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
 			Data:   nil,
@@ -351,8 +351,8 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	var placelistUpdateDTO dto.PlacelistUpdate
-	err := ctx.ShouldBindJSON(&placelistUpdateDTO)
+	var packUpdateDTO dto.PackUpdate
+	err := ctx.ShouldBindJSON(&packUpdateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -363,8 +363,8 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistUpdate := model.PlacelistUpdate{}
-	err = copier.Copy(&placelistUpdateDTO, &placelistUpdate)
+	packUpdate := model.PackUpdate{}
+	err = copier.Copy(&packUpdateDTO, &packUpdate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -375,7 +375,7 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelist, err := c.service.UpdateByID(placelistID, userID, placelistUpdate)
+	pack, err := c.service.UpdateByID(packID, userID, packUpdate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -386,8 +386,8 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
 		return
 	}
 
-	placelistDTO := dto.Placelist{}
-	err = copier.Copy(&placelist, &placelistDTO)
+	packDTO := dto.Pack{}
+	err = copier.Copy(&pack, &packDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -399,7 +399,7 @@ func (c *placelistControllerImpl) PutPlacelistByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placelistDTO,
+		Data:   packDTO,
 		Meta:   dto.Meta{Success: true},
 		Errors: nil,
 	})

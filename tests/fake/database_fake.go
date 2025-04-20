@@ -1,16 +1,14 @@
-package database
+package fake
 
 import (
+	"gorm.io/driver/sqlite"
+	"gorm.io/gorm"
 	"locpack-backend/internal/storage/entity"
 	"locpack-backend/pkg/adapter"
-	"locpack-backend/pkg/cfg"
-
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
 )
 
-func New(cfg *cfg.Database) (adapter.Database, error) {
-	db, err := gorm.Open(postgres.Open(cfg.DSN))
+func NewDatabase() (adapter.Database, error) {
+	db, err := gorm.Open(sqlite.Open("file::memory:?cache=shared"))
 	if err != nil {
 		return nil, err
 	}

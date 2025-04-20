@@ -1,15 +1,15 @@
 package router
 
 import (
-	"placelists-back/internal/server"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/server"
+	"locpack-backend/pkg/adapter"
 )
 
-func NewPlacelistRouter(api adapter.API, c server.PlacelistController) {
-	api.GET("/api/v1/placelists", c.GetPlacelistsByQuery)
-	api.POST("/api/v1/placelists", c.PostPlacelist)
-	api.GET("/api/v1/placelists/followed", c.GetPlacelistsFollowed)
-	api.GET("/api/v1/placelists/created", c.GetPlacelistsCreated)
-	api.GET("/api/v1/placelists/:id", c.GetPlacelistByID)
-	api.PUT("/api/v1/placelists/:id", c.PutPlacelistByID)
+func NewPackRouter(api adapter.API, c server.PackController) {
+	api.GET("/api/v1/packs", c.GetPacksByQuery)
+	api.POST("/api/v1/packs", c.PostPack)
+	api.GET("/api/v1/packs/followed", c.GetPacksFollowed)
+	api.GET("/api/v1/packs/created", c.GetPacksCreated)
+	api.GET("/api/v1/packs/:id", c.GetPackByID)
+	api.PUT("/api/v1/packs/:id", c.PutPackByID)
 }

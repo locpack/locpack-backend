@@ -1,9 +1,9 @@
 package repository
 
 import (
-	"placelists-back/internal/storage"
-	"placelists-back/internal/storage/entity"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/storage"
+	"locpack-backend/internal/storage/entity"
+	"locpack-backend/pkg/adapter"
 )
 
 type userRepositoryImpl struct {
@@ -22,7 +22,7 @@ func (r *userRepositoryImpl) GetByPublicID(id string) (entity.User, error) {
 
 func (r *userRepositoryImpl) GetByPublicIDFull(id string) (entity.User, error) {
 	var u entity.User
-	result := r.db.Preload("FollowedPlacelists").Preload("CreatedPlacelists").First(u, "public_id = ?", id)
+	result := r.db.Preload("FollowedPacks").Preload("CreatedPacks").First(u, "public_id = ?", id)
 	return u, result.Error
 }
 

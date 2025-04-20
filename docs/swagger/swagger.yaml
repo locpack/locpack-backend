@@ -1,64 +1,37 @@
 definitions:
-  placelists-back_internal_server_dto.Error:
+  locpack-backend_internal_server_dto.Error:
     properties:
       code:
         type: string
       message:
         type: string
     type: object
-  placelists-back_internal_server_dto.Meta:
+  locpack-backend_internal_server_dto.Meta:
     properties:
       success:
         type: boolean
     type: object
-  placelists-back_internal_server_dto.Place:
+  locpack-backend_internal_server_dto.Pack:
     properties:
-      address:
-        type: string
+      author:
+        $ref: '#/definitions/locpack-backend_internal_server_dto.User'
       id:
         type: string
       name:
         type: string
-      visited:
-        type: boolean
-    type: object
-  placelists-back_internal_server_dto.PlaceCreate:
-    properties:
-      address:
-        type: string
-      name:
-        type: string
-      visited:
-        type: string
-    type: object
-  placelists-back_internal_server_dto.PlaceUpdate:
-    properties:
-      address:
-        type: string
-      name:
-        type: string
-      visited:
-        type: boolean
-    type: object
-  placelists-back_internal_server_dto.Placelist:
-    properties:
-      author_id:
-        type: string
-      author_username:
-        type: string
-      id:
-        type: string
-      name:
-        type: string
+      places:
+        items:
+          $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
+        type: array
       status:
-        type: integer
+        type: string
     type: object
-  placelists-back_internal_server_dto.PlacelistCreate:
+  locpack-backend_internal_server_dto.PackCreate:
     properties:
       name:
         type: string
     type: object
-  placelists-back_internal_server_dto.PlacelistUpdate:
+  locpack-backend_internal_server_dto.PackUpdate:
     properties:
       name:
         type: string
@@ -67,26 +40,55 @@ definitions:
           type: string
         type: array
       status:
-        type: integer
+        type: string
     type: object
-  placelists-back_internal_server_dto.ResponseWrapper:
+  locpack-backend_internal_server_dto.Place:
+    properties:
+      address:
+        type: string
+      id:
+        type: string
+      name:
+        type: string
+      visited:
+        type: boolean
+    type: object
+  locpack-backend_internal_server_dto.PlaceCreate:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      visited:
+        type: string
+    type: object
+  locpack-backend_internal_server_dto.PlaceUpdate:
+    properties:
+      address:
+        type: string
+      name:
+        type: string
+      visited:
+        type: boolean
+    type: object
+  locpack-backend_internal_server_dto.ResponseWrapper:
     properties:
       data: {}
       errors:
         items:
-          $ref: '#/definitions/placelists-back_internal_server_dto.Error'
+          $ref: '#/definitions/locpack-backend_internal_server_dto.Error'
         type: array
       meta:
-        $ref: '#/definitions/placelists-back_internal_server_dto.Meta'
+        $ref: '#/definitions/locpack-backend_internal_server_dto.Meta'
     type: object
-  placelists-back_internal_server_dto.User:
+  locpack-backend_internal_server_dto.User:
     properties:
       id:
         type: string
       username:
         type: string
     type: object
-  placelists-back_internal_server_dto.UserUpdate:
+  locpack-backend_internal_server_dto.UserUpdate:
     properties:
       username:
         type: string
@@ -96,11 +98,214 @@ info:
   contact:
     email: a.e.sokolkov@gmail.com
     name: Aleksey
-  description: API for managing places, placelists and users
-  title: Placelists API
+  description: API for managing places, packs and users
+  title: Locpack API
   version: "1.0"
 paths:
-  /api/places:
+  /api/v1/packs:
+    get:
+      description: Get packs matching name or author
+      parameters:
+      - description: Search query
+        in: query
+        name: query
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Search packs by query
+      tags:
+      - Packs
+    post:
+      description: Add a new pack to the database
+      parameters:
+      - description: Pack data
+        in: body
+        name: pack
+        required: true
+        schema:
+          $ref: '#/definitions/locpack-backend_internal_server_dto.PackCreate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Create a new pack
+      tags:
+      - Packs
+  /api/v1/packs/{id}:
+    get:
+      description: Get a specific pack by its ID
+      parameters:
+      - description: Pack ID
+        in: path
+        name: id
+        required: true
+        type: string
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get pack by ID
+      tags:
+      - Packs
+    put:
+      description: Update a specific pack by its ID
+      parameters:
+      - description: Pack ID
+        in: path
+        name: id
+        required: true
+        type: string
+      - description: Pack data
+        in: body
+        name: pack
+        required: true
+        schema:
+          $ref: '#/definitions/locpack-backend_internal_server_dto.PackUpdate'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Update pack by ID
+      tags:
+      - Packs
+  /api/v1/packs/created:
+    get:
+      description: Get packs created by the current user
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get created packs
+      tags:
+      - Packs
+  /api/v1/packs/followed:
+    get:
+      description: Get packs followed by the current user
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+                  type: array
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  items:
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
+                  type: array
+              type: object
+      security:
+      - BearerAuth: []
+      summary: Get followed packs
+      tags:
+      - Packs
+  /api/v1/places:
     get:
       description: Get places matching name or address
       parameters:
@@ -114,233 +319,29 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
                   type: array
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
                   items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                    $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
                   type: array
               type: object
       security:
       - BearerAuth: []
       summary: Search places by query
       tags:
-      - places
-  /api/v1/placelists:
-    get:
-      description: Get placelists matching name or author
-      parameters:
-      - description: Search query
-        in: query
-        name: query
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-                  type: array
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Search placelists by query
-      tags:
-      - placelists
-    post:
-      description: Add a new placelist to the database
-      parameters:
-      - description: Placelist data
-        in: body
-        name: placelist
-        required: true
-        schema:
-          $ref: '#/definitions/placelists-back_internal_server_dto.PlacelistCreate'
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Create a new placelist
-      tags:
-      - placelists
-  /api/v1/placelists/{id}:
-    get:
-      description: Get a specific placelist by its ID
-      parameters:
-      - description: Placelist ID
-        in: path
-        name: id
-        required: true
-        type: string
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Get placelist by ID
-      tags:
-      - placelists
-    put:
-      description: Update a specific placelist by its ID
-      parameters:
-      - description: Placelist ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: Placelist data
-        in: body
-        name: placelist
-        required: true
-        schema:
-          $ref: '#/definitions/placelists-back_internal_server_dto.PlacelistUpdate'
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Update placelist by ID
-      tags:
-      - placelists
-  /api/v1/placelists/created:
-    get:
-      description: Get placelists created by the current user
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-                  type: array
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Get created placelists
-      tags:
-      - placelists
-  /api/v1/placelists/followed:
-    get:
-      description: Get placelists followed by the current user
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-                  type: array
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  items:
-                    $ref: '#/definitions/placelists-back_internal_server_dto.Placelist'
-                  type: array
-              type: object
-      security:
-      - BearerAuth: []
-      summary: Get followed placelists
-      tags:
-      - placelists
-  /api/v1/places:
+      - Places
     post:
       description: Add a new place to the database
       parameters:
@@ -349,31 +350,31 @@ paths:
         name: place
         required: true
         schema:
-          $ref: '#/definitions/placelists-back_internal_server_dto.PlaceCreate'
+          $ref: '#/definitions/locpack-backend_internal_server_dto.PlaceCreate'
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
       security:
       - BearerAuth: []
       summary: Create a new place
       tags:
-      - places
+      - Places
   /api/v1/places/{id}:
     get:
       description: Get a specific place by its ID
@@ -388,25 +389,25 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
       security:
       - BearerAuth: []
       summary: Get place by ID
       tags:
-      - places
+      - Places
     put:
       description: Update a specific place by its ID
       parameters:
@@ -420,31 +421,31 @@ paths:
         name: place
         required: true
         schema:
-          $ref: '#/definitions/placelists-back_internal_server_dto.PlaceUpdate'
+          $ref: '#/definitions/locpack-backend_internal_server_dto.PlaceUpdate'
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.Place'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
       security:
       - BearerAuth: []
       summary: Update place by ID
       tags:
-      - places
+      - Places
   /api/v1/users/{id}:
     get:
       description: Get information about any user by their ID
@@ -459,23 +460,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.User'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.User'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
               type: object
       summary: Get user by ID
       tags:
-      - users
+      - Users
     put:
       description: Update user information
       parameters:
@@ -489,29 +490,29 @@ paths:
         name: user
         required: true
         schema:
-          $ref: '#/definitions/placelists-back_internal_server_dto.UserUpdate'
+          $ref: '#/definitions/locpack-backend_internal_server_dto.UserUpdate'
       responses:
         "200":
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.User'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.User'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
               type: object
       summary: Update user by ID
       tags:
-      - users
+      - Users
   /api/v1/users/my:
     get:
       description: Get information about the currently authenticated user
@@ -520,23 +521,23 @@ paths:
           description: OK
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.User'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
               type: object
         "400":
           description: Bad Request
           schema:
             allOf:
-            - $ref: '#/definitions/placelists-back_internal_server_dto.ResponseWrapper'
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
             - properties:
                 data:
-                  $ref: '#/definitions/placelists-back_internal_server_dto.User'
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
               type: object
       security:
       - BearerAuth: []
       summary: Get current user info
       tags:
-      - users
+      - Users
 swagger: "2.0"

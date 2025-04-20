@@ -1,6 +1,6 @@
 package service
 
-import "placelists-back/internal/service/model"
+import "locpack-backend/internal/service/model"
 
 type PlaceService interface {
 	GetByID(placeID string, userID string) (model.Place, error)
@@ -9,14 +9,14 @@ type PlaceService interface {
 	UpdateByID(placeID string, userID string, pu model.PlaceUpdate) (model.Place, error)
 }
 
-type PlacelistService interface {
-	GetByID(placelistID string, userID string) (model.Placelist, error)
-	GetByNameOrAuthor(query string, userID string) ([]model.Placelist, error)
-	GetFollowedByUserID(userID string) ([]model.Placelist, error)
-	GetCreatedByUserID(userID string) ([]model.Placelist, error)
-	GetPlacesByID(placelistID string, userID string) ([]model.Place, error)
-	Create(userID string, pc model.PlacelistCreate) (model.Placelist, error)
-	UpdateByID(placelistID string, userID string, pu model.PlacelistUpdate) (model.Placelist, error)
+type PackService interface {
+	GetByID(packID string, userID string) (model.Pack, error)
+	GetByNameOrAuthor(query string, userID string) ([]model.Pack, error)
+	GetFollowedByUserID(userID string) ([]model.Pack, error)
+	GetCreatedByUserID(userID string) ([]model.Pack, error)
+	GetPlacesByID(packID string, userID string) ([]model.Place, error)
+	Create(userID string, pc model.PackCreate) (model.Pack, error)
+	UpdateByID(packID string, userID string, pu model.PackUpdate) (model.Pack, error)
 }
 
 type UserService interface {

@@ -1,3 +1,4 @@
-# placelists-back
+# locpack-backend
 
-swag init -output ./docs/swagger -g ./cmd/placelists-back/main.go --parseDependency
+swag init -output ./docs/swagger -g ./cmd/locpack-backend/main.go --parseDependency
+docusaurus

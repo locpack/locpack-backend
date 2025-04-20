@@ -4,11 +4,11 @@ import (
 	"net/http"
 
 	"github.com/jinzhu/copier"
-	"placelists-back/internal/server"
-	"placelists-back/internal/server/dto"
-	"placelists-back/internal/service"
-	"placelists-back/internal/service/model"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/server"
+	"locpack-backend/internal/server/dto"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
+	"locpack-backend/pkg/adapter"
 )
 
 type placeControllerImpl struct {
@@ -22,7 +22,7 @@ func NewPlaceController(service service.PlaceService) server.PlaceController {
 // GetPlacesByQuery
 // @Summary Search places by query
 // @Description Get places matching name or address
-// @Tags places
+// @Tags Places
 // @Security BearerAuth
 // @Param query query string true "Search query"
 // @Success 200 {object} dto.ResponseWrapper{data=[]dto.Place}
@@ -84,7 +84,7 @@ func (c *placeControllerImpl) GetPlacesByQuery(ctx adapter.APIContext) {
 // PostPlace
 // @Summary Create a new place
 // @Description Add a new place to the database
-// @Tags places
+// @Tags Places
 // @Security BearerAuth
 // @Param place body dto.PlaceCreate true "Place data"
 // @Success 200 {object} dto.ResponseWrapper{data=dto.Place}
@@ -159,7 +159,7 @@ func (c *placeControllerImpl) PostPlace(ctx adapter.APIContext) {
 // GetPlaceByID
 // @Summary Get place by ID
 // @Description Get a specific place by its ID
-// @Tags places
+// @Tags Places
 // @Security BearerAuth
 // @Param id path string true "Place ID"
 // @Success 200 {object} dto.ResponseWrapper{data=dto.Place}
@@ -221,7 +221,7 @@ func (c *placeControllerImpl) GetPlaceByID(ctx adapter.APIContext) {
 // PutPlaceByID
 // @Summary Update place by ID
 // @Description Update a specific place by its ID
-// @Tags places
+// @Tags Places
 // @Security BearerAuth
 // @Param id path string true "Place ID"
 // @Param place body dto.PlaceUpdate true "Place data"

@@ -1,8 +1,8 @@
 package router
 
 import (
-	"placelists-back/internal/server"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/server"
+	"locpack-backend/pkg/adapter"
 )
 
 func NewPlaceRouter(api adapter.API, c server.PlaceController) {

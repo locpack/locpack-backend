@@ -1,9 +1,9 @@
 package domain
 
 import (
-	"placelists-back/internal/service"
-	"placelists-back/internal/service/model"
-	"placelists-back/internal/storage"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
+	"locpack-backend/internal/storage"
 
 	"github.com/jinzhu/copier"
 )

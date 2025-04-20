@@ -8,4 +8,5 @@ import (
 type Database = *gorm.DB
 
 type API = *gin.Engine
+type APIHandler = gin.HandlerFunc
 type APIContext = *gin.Context

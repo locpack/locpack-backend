@@ -18,7 +18,380 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/places": {
+        "/api/v1/packs": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get packs matching name or author",
+                "tags": [
+                    "Packs"
+                ],
+                "summary": "Search packs by query",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Search query",
+                        "name": "query",
+                        "in": "query",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "post": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Add a new pack to the database",
+                "tags": [
+                    "Packs"
+                ],
+                "summary": "Create a new pack",
+                "parameters": [
+                    {
+                        "description": "Pack data",
+                        "name": "pack",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.PackCreate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/packs/created": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get packs created by the current user",
+                "tags": [
+                    "Packs"
+                ],
+                "summary": "Get created packs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/packs/followed": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get packs followed by the current user",
+                "tags": [
+                    "Packs"
+                ],
+                "summary": "Get followed packs",
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "type": "array",
+                                            "items": {
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                            }
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/packs/{id}": {
+            "get": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Get a specific pack by its ID",
+                "tags": [
+                    "Packs"
+                ],
+                "summary": "Get pack by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pack ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            },
+            "put": {
+                "security": [
+                    {
+                        "BearerAuth": []
+                    }
+                ],
+                "description": "Update a specific pack by its ID",
+                "tags": [
+                    "Packs"
+                ],
+                "summary": "Update pack by ID",
+                "parameters": [
+                    {
+                        "type": "string",
+                        "description": "Pack ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    },
+                    {
+                        "description": "Pack data",
+                        "name": "pack",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.PackUpdate"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Pack"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/places": {
             "get": {
                 "security": [
                     {
@@ -27,7 +400,7 @@ const docTemplate = `{
                 ],
                 "description": "Get places matching name or address",
                 "tags": [
-                    "places"
+                    "Places"
                 ],
                 "summary": "Search places by query",
                 "parameters": [
@@ -45,7 +418,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
@@ -53,7 +426,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                             }
                                         }
                                     }
@@ -66,7 +439,7 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
@@ -74,74 +447,7 @@ const docTemplate = `{
                                         "data": {
                                             "type": "array",
                                             "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/placelists": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get placelists matching name or author",
-                "tags": [
-                    "placelists"
-                ],
-                "summary": "Search placelists by query",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Search query",
-                        "name": "query",
-                        "in": "query",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
+                                                "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                             }
                                         }
                                     }
@@ -151,314 +457,6 @@ const docTemplate = `{
                     }
                 }
             },
-            "post": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Add a new placelist to the database",
-                "tags": [
-                    "placelists"
-                ],
-                "summary": "Create a new placelist",
-                "parameters": [
-                    {
-                        "description": "Placelist data",
-                        "name": "placelist",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/placelists-back_internal_server_dto.PlacelistCreate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/placelists/created": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get placelists created by the current user",
-                "tags": [
-                    "placelists"
-                ],
-                "summary": "Get created placelists",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/placelists/followed": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get placelists followed by the current user",
-                "tags": [
-                    "placelists"
-                ],
-                "summary": "Get followed placelists",
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "type": "array",
-                                            "items": {
-                                                "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                            }
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/placelists/{id}": {
-            "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Get a specific placelist by its ID",
-                "tags": [
-                    "placelists"
-                ],
-                "summary": "Get placelist by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Placelist ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            },
-            "put": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
-                "description": "Update a specific placelist by its ID",
-                "tags": [
-                    "placelists"
-                ],
-                "summary": "Update placelist by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "Placelist ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "Placelist data",
-                        "name": "placelist",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/placelists-back_internal_server_dto.PlacelistUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Placelist"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
-            }
-        },
-        "/api/v1/places": {
             "post": {
                 "security": [
                     {
@@ -467,7 +465,7 @@ const docTemplate = `{
                 ],
                 "description": "Add a new place to the database",
                 "tags": [
-                    "places"
+                    "Places"
                 ],
                 "summary": "Create a new place",
                 "parameters": [
@@ -477,7 +475,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/placelists-back_internal_server_dto.PlaceCreate"
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.PlaceCreate"
                         }
                     }
                 ],
@@ -487,13 +485,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                         }
                                     }
                                 }
@@ -505,13 +503,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                         }
                                     }
                                 }
@@ -530,7 +528,7 @@ const docTemplate = `{
                 ],
                 "description": "Get a specific place by its ID",
                 "tags": [
-                    "places"
+                    "Places"
                 ],
                 "summary": "Get place by ID",
                 "parameters": [
@@ -548,13 +546,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                         }
                                     }
                                 }
@@ -566,13 +564,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                         }
                                     }
                                 }
@@ -589,7 +587,7 @@ const docTemplate = `{
                 ],
                 "description": "Update a specific place by its ID",
                 "tags": [
-                    "places"
+                    "Places"
                 ],
                 "summary": "Update place by ID",
                 "parameters": [
@@ -606,7 +604,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/placelists-back_internal_server_dto.PlaceUpdate"
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.PlaceUpdate"
                         }
                     }
                 ],
@@ -616,13 +614,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                         }
                                     }
                                 }
@@ -634,13 +632,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.Place"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
                                         }
                                     }
                                 }
@@ -659,7 +657,7 @@ const docTemplate = `{
                 ],
                 "description": "Get information about the currently authenticated user",
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Get current user info",
                 "responses": {
@@ -668,13 +666,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.User"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                                         }
                                     }
                                 }
@@ -686,13 +684,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.User"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                                         }
                                     }
                                 }
@@ -706,7 +704,7 @@ const docTemplate = `{
             "get": {
                 "description": "Get information about any user by their ID",
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Get user by ID",
                 "parameters": [
@@ -724,13 +722,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.User"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                                         }
                                     }
                                 }
@@ -742,13 +740,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.User"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                                         }
                                     }
                                 }
@@ -760,7 +758,7 @@ const docTemplate = `{
             "put": {
                 "description": "Update user information",
                 "tags": [
-                    "users"
+                    "Users"
                 ],
                 "summary": "Update user by ID",
                 "parameters": [
@@ -777,7 +775,7 @@ const docTemplate = `{
                         "in": "body",
                         "required": true,
                         "schema": {
-                            "$ref": "#/definitions/placelists-back_internal_server_dto.UserUpdate"
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.UserUpdate"
                         }
                     }
                 ],
@@ -787,13 +785,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.User"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                                         }
                                     }
                                 }
@@ -805,13 +803,13 @@ const docTemplate = `{
                         "schema": {
                             "allOf": [
                                 {
-                                    "$ref": "#/definitions/placelists-back_internal_server_dto.ResponseWrapper"
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
                                 },
                                 {
                                     "type": "object",
                                     "properties": {
                                         "data": {
-                                            "$ref": "#/definitions/placelists-back_internal_server_dto.User"
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                                         }
                                     }
                                 }
@@ -823,7 +821,7 @@ const docTemplate = `{
         }
     },
     "definitions": {
-        "placelists-back_internal_server_dto.Error": {
+        "locpack-backend_internal_server_dto.Error": {
             "type": "object",
             "properties": {
                 "code": {
@@ -834,7 +832,7 @@ const docTemplate = `{
                 }
             }
         },
-        "placelists-back_internal_server_dto.Meta": {
+        "locpack-backend_internal_server_dto.Meta": {
             "type": "object",
             "properties": {
                 "success": {
@@ -842,11 +840,11 @@ const docTemplate = `{
                 }
             }
         },
-        "placelists-back_internal_server_dto.Place": {
+        "locpack-backend_internal_server_dto.Pack": {
             "type": "object",
             "properties": {
-                "address": {
-                    "type": "string"
+                "author": {
+                    "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
                 },
                 "id": {
                     "type": "string"
@@ -854,60 +852,18 @@ const docTemplate = `{
                 "name": {
                     "type": "string"
                 },
-                "visited": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "placelists-back_internal_server_dto.PlaceCreate": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "visited": {
-                    "type": "string"
-                }
-            }
-        },
-        "placelists-back_internal_server_dto.PlaceUpdate": {
-            "type": "object",
-            "properties": {
-                "address": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
-                },
-                "visited": {
-                    "type": "boolean"
-                }
-            }
-        },
-        "placelists-back_internal_server_dto.Placelist": {
-            "type": "object",
-            "properties": {
-                "author_id": {
-                    "type": "string"
-                },
-                "author_username": {
-                    "type": "string"
-                },
-                "id": {
-                    "type": "string"
-                },
-                "name": {
-                    "type": "string"
+                "places": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/locpack-backend_internal_server_dto.Place"
+                    }
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
-        "placelists-back_internal_server_dto.PlacelistCreate": {
+        "locpack-backend_internal_server_dto.PackCreate": {
             "type": "object",
             "properties": {
                 "name": {
@@ -915,7 +871,7 @@ const docTemplate = `{
                 }
             }
         },
-        "placelists-back_internal_server_dto.PlacelistUpdate": {
+        "locpack-backend_internal_server_dto.PackUpdate": {
             "type": "object",
             "properties": {
                 "name": {
@@ -928,26 +884,71 @@ const docTemplate = `{
                     }
                 },
                 "status": {
-                    "type": "integer"
+                    "type": "string"
                 }
             }
         },
-        "placelists-back_internal_server_dto.ResponseWrapper": {
+        "locpack-backend_internal_server_dto.Place": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "visited": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "locpack-backend_internal_server_dto.PlaceCreate": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "visited": {
+                    "type": "string"
+                }
+            }
+        },
+        "locpack-backend_internal_server_dto.PlaceUpdate": {
+            "type": "object",
+            "properties": {
+                "address": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "visited": {
+                    "type": "boolean"
+                }
+            }
+        },
+        "locpack-backend_internal_server_dto.ResponseWrapper": {
             "type": "object",
             "properties": {
                 "data": {},
                 "errors": {
                     "type": "array",
                     "items": {
-                        "$ref": "#/definitions/placelists-back_internal_server_dto.Error"
+                        "$ref": "#/definitions/locpack-backend_internal_server_dto.Error"
                     }
                 },
                 "meta": {
-                    "$ref": "#/definitions/placelists-back_internal_server_dto.Meta"
+                    "$ref": "#/definitions/locpack-backend_internal_server_dto.Meta"
                 }
             }
         },
-        "placelists-back_internal_server_dto.User": {
+        "locpack-backend_internal_server_dto.User": {
             "type": "object",
             "properties": {
                 "id": {
@@ -958,7 +959,7 @@ const docTemplate = `{
                 }
             }
         },
-        "placelists-back_internal_server_dto.UserUpdate": {
+        "locpack-backend_internal_server_dto.UserUpdate": {
             "type": "object",
             "properties": {
                 "username": {
@@ -975,8 +976,8 @@ var SwaggerInfo = &swag.Spec{
 	Host:             "localhost:8080",
 	BasePath:         "",
 	Schemes:          []string{},
-	Title:            "Placelists API",
-	Description:      "API for managing places, placelists and users",
+	Title:            "Locpack API",
+	Description:      "API for managing places, packs and users",
 	InfoInstanceName: "swagger",
 	SwaggerTemplate:  docTemplate,
 	LeftDelim:        "{{",

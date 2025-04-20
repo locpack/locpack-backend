@@ -2,19 +2,19 @@ package main
 
 import (
 	"github.com/ilyakaznacheev/cleanenv"
-	_ "placelists-back/docs/swagger"
-	"placelists-back/internal/cfg"
-	"placelists-back/internal/server/controller"
-	"placelists-back/internal/server/router"
-	"placelists-back/internal/service/domain"
-	"placelists-back/internal/storage/repository"
-	"placelists-back/pkg/adapter/api"
-	"placelists-back/pkg/adapter/database"
+	_ "locpack-backend/docs/swagger"
+	"locpack-backend/internal/cfg"
+	"locpack-backend/internal/server/controller"
+	"locpack-backend/internal/server/router"
+	"locpack-backend/internal/service/domain"
+	"locpack-backend/internal/storage/repository"
+	"locpack-backend/pkg/adapter/api"
+	"locpack-backend/pkg/adapter/database"
 )
 
-// @title Placelists API
+// @title Locpack API
 // @version 1.0
-// @description API for managing places, placelists and users
+// @description API for managing places, packs and users
 // @contact.name Aleksey
 // @contact.email a.e.sokolkov@gmail.com
 // @host localhost:8080
@@ -32,21 +32,21 @@ func main() {
 	}
 
 	placeRepository := repository.NewPlaceRepository(db)
-	placelistRepository := repository.NewPlacelistRepository(db)
+	packRepository := repository.NewPackRepository(db)
 	userRepository := repository.NewUserRepository(db)
 
 	placeService := domain.NewPlaceService(placeRepository, userRepository)
-	placelistService := domain.NewPlacelistService(placelistRepository, placeRepository, userRepository)
+	packService := domain.NewPackService(packRepository, placeRepository, userRepository)
 	userService := domain.NewUserService(userRepository)
 
 	placeController := controller.NewPlaceController(placeService)
-	placelistController := controller.NewPlacelistController(placelistService)
+	packController := controller.NewPackController(packService)
 	userController := controller.NewUserController(userService)
 
 	a := api.New(&config.API)
 
 	router.NewPlaceRouter(a, placeController)
-	router.NewPlacelistRouter(a, placelistController)
+	router.NewPackRouter(a, packController)
 	router.NewUserRouter(a, userController)
 	router.NewSwaggerRouter(a)
 

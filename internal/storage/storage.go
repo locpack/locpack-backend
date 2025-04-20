@@ -1,7 +1,7 @@
 package storage
 
 import (
-	"placelists-back/internal/storage/entity"
+	"locpack-backend/internal/storage/entity"
 )
 
 type PlaceRepository interface {
@@ -13,11 +13,11 @@ type PlaceRepository interface {
 	Update(p entity.Place) error
 }
 
-type PlacelistRepository interface {
-	GetByPublicIDFull(id string) (entity.Placelist, error)
-	GetByNameOrAuthorFull(query string) ([]entity.Placelist, error)
-	Create(p entity.Placelist) error
-	Update(p entity.Placelist) error
+type PackRepository interface {
+	GetByPublicIDFull(id string) (entity.Pack, error)
+	GetByNameOrAuthorFull(query string) ([]entity.Pack, error)
+	Create(p entity.Pack) error
+	Update(p entity.Pack) error
 }
 
 type UserRepository interface {

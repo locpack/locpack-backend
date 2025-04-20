@@ -1,4 +1,4 @@
-package utils
+package random
 
 import "github.com/google/uuid"
 

@@ -1,11 +1,11 @@
 package domain
 
 import (
-	"placelists-back/internal/service"
-	"placelists-back/internal/service/model"
-	"placelists-back/internal/storage"
-	"placelists-back/internal/storage/entity"
-	"placelists-back/pkg/utils"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
+	"locpack-backend/internal/storage"
+	"locpack-backend/internal/storage/entity"
+	"locpack-backend/pkg/utils/random"
 
 	"github.com/jinzhu/copier"
 )
@@ -88,8 +88,8 @@ func (s *placeServiceImpl) Create(userID string, pc model.PlaceCreate) (model.Pl
 	}
 
 	placeEntity := entity.Place{
-		ID:       utils.GenerateID(),
-		PublicID: utils.GeneratePublicID(),
+		ID:       random.GenerateID(),
+		PublicID: random.GeneratePublicID(),
 		Name:     pc.Name,
 		Address:  pc.Address,
 		AuthorID: userEntity.ID,

@@ -1,31 +1,27 @@
 package server
 
-import "github.com/gin-gonic/gin"
-
-type Controller struct {
-	Place     PlaceController
-	Placelist PlacelistController
-	User      UserController
-}
+import (
+	"locpack-backend/pkg/adapter"
+)
 
 type PlaceController interface {
-	GetPlacesByQuery(ctx *gin.Context)
-	PostPlace(ctx *gin.Context)
-	GetPlaceByID(ctx *gin.Context)
-	PutPlaceByID(ctx *gin.Context)
+	GetPlacesByQuery(ctx adapter.APIContext)
+	PostPlace(ctx adapter.APIContext)
+	GetPlaceByID(ctx adapter.APIContext)
+	PutPlaceByID(ctx adapter.APIContext)
 }
 
-type PlacelistController interface {
-	GetPlacelistsByQuery(ctx *gin.Context)
-	PostPlacelist(ctx *gin.Context)
-	GetPlacelistsFollowed(ctx *gin.Context)
-	GetPlacelistsCreated(ctx *gin.Context)
-	GetPlacelistByID(ctx *gin.Context)
-	PutPlacelistByID(ctx *gin.Context)
+type PackController interface {
+	GetPacksByQuery(ctx adapter.APIContext)
+	PostPack(ctx adapter.APIContext)
+	GetPacksFollowed(ctx adapter.APIContext)
+	GetPacksCreated(ctx adapter.APIContext)
+	GetPackByID(ctx adapter.APIContext)
+	PutPackByID(ctx adapter.APIContext)
 }
 
 type UserController interface {
-	GetUserMy(ctx *gin.Context)
-	GetUserByID(ctx *gin.Context)
-	PutUserByID(ctx *gin.Context)
+	GetUserMy(ctx adapter.APIContext)
+	GetUserByID(ctx adapter.APIContext)
+	PutUserByID(ctx adapter.APIContext)
 }

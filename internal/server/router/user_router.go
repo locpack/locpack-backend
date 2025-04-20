@@ -1,8 +1,8 @@
 package router
 
 import (
-	"placelists-back/internal/server"
-	"placelists-back/pkg/adapter"
+	"locpack-backend/internal/server"
+	"locpack-backend/pkg/adapter"
 )
 
 func NewUserRouter(api adapter.API, c server.UserController) {

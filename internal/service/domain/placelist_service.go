@@ -3,153 +3,153 @@ package domain
 import (
 	"errors"
 
-	"placelists-back/internal/service"
-	"placelists-back/internal/service/enum"
-	"placelists-back/internal/service/model"
-	"placelists-back/internal/storage"
-	"placelists-back/internal/storage/entity"
-	"placelists-back/pkg/utils"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
+	"locpack-backend/internal/storage"
+	"locpack-backend/internal/storage/entity"
+	"locpack-backend/pkg/enum/pack_status"
+	"locpack-backend/pkg/utils/random"
 
 	"github.com/jinzhu/copier"
 )
 
-type placelistServiceImpl struct {
-	placelistRepository storage.PlacelistRepository
-	placeRepository     storage.PlaceRepository
-	userRepository      storage.UserRepository
+type packServiceImpl struct {
+	packRepository  storage.PackRepository
+	placeRepository storage.PlaceRepository
+	userRepository  storage.UserRepository
 }
 
-func NewPlacelistService(
-	placelistRepository storage.PlacelistRepository,
+func NewPackService(
+	packRepository storage.PackRepository,
 	placeRepository storage.PlaceRepository,
 	userRepository storage.UserRepository,
-) service.PlacelistService {
-	return &placelistServiceImpl{placelistRepository, placeRepository, userRepository}
+) service.PackService {
+	return &packServiceImpl{packRepository, placeRepository, userRepository}
 }
 
-func (s *placelistServiceImpl) GetByID(placelistID string, userID string) (model.Placelist, error) {
-	placelistEntity, err := s.placelistRepository.GetByPublicIDFull(placelistID)
+func (s *packServiceImpl) GetByID(packID string, userID string) (model.Pack, error) {
+	packEntity, err := s.packRepository.GetByPublicIDFull(packID)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
 	followed := false
-	for _, follower := range placelistEntity.FollowedUsers {
+	for _, follower := range packEntity.FollowedUsers {
 		if follower.PublicID == userID {
 			followed = true
 			break
 		}
 	}
 
-	status := enum.PlacelistNone
-	if placelistEntity.Author.PublicID == userID {
-		status = enum.PlacelistCreated
+	status := pack_status.None
+	if packEntity.Author.PublicID == userID {
+		status = pack_status.Created
 	} else if followed {
-		status = enum.PlacelistFollowed
+		status = pack_status.Followed
 	}
 
-	foundPlacelist := model.Placelist{
-		ID:             placelistEntity.PublicID,
-		Name:           placelistEntity.Name,
-		AuthorID:       placelistEntity.Author.PublicID,
-		AuthorUsername: placelistEntity.Author.Username,
+	foundPack := model.Pack{
+		ID:             packEntity.PublicID,
+		Name:           packEntity.Name,
+		AuthorID:       packEntity.Author.PublicID,
+		AuthorUsername: packEntity.Author.Username,
 		Status:         status,
 	}
 
-	return foundPlacelist, nil
+	return foundPack, nil
 }
 
-func (s *placelistServiceImpl) GetByNameOrAuthor(query string, userID string) ([]model.Placelist, error) {
-	placelistsEntities, err := s.placelistRepository.GetByNameOrAuthorFull(query)
+func (s *packServiceImpl) GetByNameOrAuthor(query string, userID string) ([]model.Pack, error) {
+	packsEntities, err := s.packRepository.GetByNameOrAuthorFull(query)
 	if err != nil {
-		return []model.Placelist{}, err
+		return []model.Pack{}, err
 	}
 
-	var foundPlacelists []model.Placelist
+	var foundPacks []model.Pack
 
-	for _, placelistEntity := range placelistsEntities {
+	for _, packEntity := range packsEntities {
 		followed := false
-		for _, follower := range placelistEntity.FollowedUsers {
+		for _, follower := range packEntity.FollowedUsers {
 			if follower.PublicID == userID {
 				followed = true
 				break
 			}
 		}
 
-		status := enum.PlacelistNone
-		if placelistEntity.Author.PublicID == userID {
-			status = enum.PlacelistCreated
+		status := pack_status.None
+		if packEntity.Author.PublicID == userID {
+			status = pack_status.Created
 		} else if followed {
-			status = enum.PlacelistFollowed
+			status = pack_status.Followed
 		}
 
-		placelist := model.Placelist{
-			ID:             placelistEntity.PublicID,
-			Name:           placelistEntity.Name,
-			AuthorID:       placelistEntity.Author.PublicID,
-			AuthorUsername: placelistEntity.Author.Username,
+		pack := model.Pack{
+			ID:             packEntity.PublicID,
+			Name:           packEntity.Name,
+			AuthorID:       packEntity.Author.PublicID,
+			AuthorUsername: packEntity.Author.Username,
 			Status:         status,
 		}
 
-		foundPlacelists = append(foundPlacelists, placelist)
+		foundPacks = append(foundPacks, pack)
 	}
 
-	return foundPlacelists, nil
+	return foundPacks, nil
 }
 
-func (s *placelistServiceImpl) GetFollowedByUserID(userID string) ([]model.Placelist, error) {
+func (s *packServiceImpl) GetFollowedByUserID(userID string) ([]model.Pack, error) {
 	userEntity, err := s.userRepository.GetByPublicIDFull(userID)
 	if err != nil {
-		return []model.Placelist{}, err
+		return []model.Pack{}, err
 	}
 
-	var foundPlacelists []model.Placelist
+	var foundPacks []model.Pack
 
-	for _, placelistEntity := range userEntity.FollowedPlacelists {
-		placelist := model.Placelist{
-			ID:             placelistEntity.PublicID,
-			Name:           placelistEntity.Name,
-			AuthorID:       placelistEntity.Author.PublicID,
-			AuthorUsername: placelistEntity.Author.Username,
-			Status:         enum.PlacelistFollowed,
+	for _, packEntity := range userEntity.FollowedPacks {
+		pack := model.Pack{
+			ID:             packEntity.PublicID,
+			Name:           packEntity.Name,
+			AuthorID:       packEntity.Author.PublicID,
+			AuthorUsername: packEntity.Author.Username,
+			Status:         pack_status.Followed,
 		}
-		foundPlacelists = append(foundPlacelists, placelist)
+		foundPacks = append(foundPacks, pack)
 	}
 
-	return foundPlacelists, nil
+	return foundPacks, nil
 }
 
-func (s *placelistServiceImpl) GetCreatedByUserID(userID string) ([]model.Placelist, error) {
+func (s *packServiceImpl) GetCreatedByUserID(userID string) ([]model.Pack, error) {
 	userEntity, err := s.userRepository.GetByPublicIDFull(userID)
 	if err != nil {
-		return []model.Placelist{}, err
+		return []model.Pack{}, err
 	}
 
-	var foundPlacelists []model.Placelist
+	var foundPacks []model.Pack
 
-	for _, placelistEntity := range userEntity.FollowedPlacelists {
-		placelist := model.Placelist{
-			ID:             placelistEntity.PublicID,
-			Name:           placelistEntity.Name,
-			AuthorID:       placelistEntity.Author.PublicID,
-			AuthorUsername: placelistEntity.Author.Username,
-			Status:         enum.PlacelistCreated,
+	for _, packEntity := range userEntity.FollowedPacks {
+		pack := model.Pack{
+			ID:             packEntity.PublicID,
+			Name:           packEntity.Name,
+			AuthorID:       packEntity.Author.PublicID,
+			AuthorUsername: packEntity.Author.Username,
+			Status:         pack_status.Created,
 		}
-		foundPlacelists = append(foundPlacelists, placelist)
+		foundPacks = append(foundPacks, pack)
 	}
 
-	return foundPlacelists, nil
+	return foundPacks, nil
 }
 
-func (s *placelistServiceImpl) GetPlacesByID(placelistID string, userID string) ([]model.Place, error) {
-	placelistEntity, err := s.placelistRepository.GetByPublicIDFull(placelistID)
+func (s *packServiceImpl) GetPlacesByID(packID string, userID string) ([]model.Place, error) {
+	packEntity, err := s.packRepository.GetByPublicIDFull(packID)
 	if err != nil {
 		return []model.Place{}, err
 	}
 
 	var foundPlaces []model.Place
 
-	for _, placeEntity := range placelistEntity.Places {
+	for _, placeEntity := range packEntity.Places {
 		visited := false
 		for _, visitor := range placeEntity.Visitors {
 			if visitor.PublicID == userID {
@@ -171,56 +171,56 @@ func (s *placelistServiceImpl) GetPlacesByID(placelistID string, userID string) 
 	return foundPlaces, nil
 }
 
-func (s *placelistServiceImpl) Create(userID string, pc model.PlacelistCreate) (model.Placelist, error) {
+func (s *packServiceImpl) Create(userID string, pc model.PackCreate) (model.Pack, error) {
 	userEntity, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	placelistEntity := entity.Placelist{
-		ID:       utils.GenerateID(),
-		PublicID: utils.GeneratePublicID(),
+	packEntity := entity.Pack{
+		ID:       random.GenerateID(),
+		PublicID: random.GeneratePublicID(),
 		Name:     pc.Name,
 		AuthorID: userEntity.ID,
 	}
 
-	err = s.placelistRepository.Create(placelistEntity)
+	err = s.packRepository.Create(packEntity)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	placelist := model.Placelist{}
-	err = copier.Copy(&placelistEntity, &placelist)
+	pack := model.Pack{}
+	err = copier.Copy(&packEntity, &pack)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	return placelist, err
+	return pack, err
 }
 
-func (s *placelistServiceImpl) UpdateByID(placelistID string, userID string, pu model.PlacelistUpdate) (model.Placelist, error) {
-	if pu.Status == enum.PlacelistCreated {
-		return model.Placelist{}, errors.New("impossible to create placelist with update function")
+func (s *packServiceImpl) UpdateByID(packID string, userID string, pu model.PackUpdate) (model.Pack, error) {
+	if pu.Status == pack_status.Created {
+		return model.Pack{}, errors.New("impossible to create pack with update function")
 	}
 
 	userEntity, err := s.userRepository.GetByPublicID(userID)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	placelistEntity, err := s.placelistRepository.GetByPublicIDFull(placelistID)
+	packEntity, err := s.packRepository.GetByPublicIDFull(packID)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	placelistEntity.Name = pu.Name
+	packEntity.Name = pu.Name
 
-	if pu.Status == enum.PlacelistFollowed {
-		placelistEntity.FollowedUsers = append(placelistEntity.FollowedUsers, userEntity)
-	} else if pu.Status == enum.PlacelistNone {
-		for i, follower := range placelistEntity.FollowedUsers {
+	if pu.Status == pack_status.Followed {
+		packEntity.FollowedUsers = append(packEntity.FollowedUsers, userEntity)
+	} else if pu.Status == pack_status.None {
+		for i, follower := range packEntity.FollowedUsers {
 			if follower.PublicID == userID {
-				placelistEntity.FollowedUsers = append(placelistEntity.FollowedUsers[:i], placelistEntity.FollowedUsers[i+1:]...)
+				packEntity.FollowedUsers = append(packEntity.FollowedUsers[:i], packEntity.FollowedUsers[i+1:]...)
 			}
 		}
 	}
@@ -234,18 +234,18 @@ func (s *placelistServiceImpl) UpdateByID(placelistID string, userID string, pu 
 		}
 	}
 
-	placelistEntity.Places = placesEntities
+	packEntity.Places = placesEntities
 
-	err = s.placelistRepository.Update(placelistEntity)
+	err = s.packRepository.Update(packEntity)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	placelist := model.Placelist{}
-	err = copier.Copy(&placelistEntity, &placelist)
+	pack := model.Pack{}
+	err = copier.Copy(&packEntity, &pack)
 	if err != nil {
-		return model.Placelist{}, err
+		return model.Pack{}, err
 	}
 
-	return placelist, err
+	return pack, err
 }

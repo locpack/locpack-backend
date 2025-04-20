@@ -2,8 +2,8 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"placelists-back/pkg/adapter"
-	"placelists-back/pkg/cfg"
+	"locpack-backend/pkg/adapter"
+	"locpack-backend/pkg/cfg"
 )
 
 func New(cfg *cfg.API) adapter.API {

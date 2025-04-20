@@ -1,4 +1,4 @@
-name: placelists
+name: lockpack
 
 services:
   database:
@@ -20,12 +20,12 @@ services:
   backend:
     container_name: backend
     build: .
-    entrypoint: /placelists-back
+    entrypoint: /locpack-backend
     ports:
       - "8080:8080"
     depends_on:
       database:
         condition: service_healthy
     environment:
-      PS_DATABASE_DSN: "host=database user=postgres password=postgres dbname=postgres port=5432"
-      PS_API_ADDRESS: 0.0.0.0:8080
+      LP_DATABASE_DSN: "host=database user=postgres password=postgres dbname=postgres port=5432"
+      LP_API_ADDRESS: 0.0.0.0:8080
