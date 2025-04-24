@@ -159,7 +159,7 @@ func (s *packServiceImpl) GetPlacesByID(packID string, userID string) ([]model.P
 		}
 
 		place := model.Place{}
-		err = copier.Copy(&placeEntity, &place)
+		err = copier.Copy(&place, &placeEntity)
 		if err != nil {
 			return []model.Place{}, err
 		}
@@ -190,7 +190,7 @@ func (s *packServiceImpl) Create(userID string, pc model.PackCreate) (model.Pack
 	}
 
 	pack := model.Pack{}
-	err = copier.Copy(&packEntity, &pack)
+	err = copier.Copy(&pack, &packEntity)
 	if err != nil {
 		return model.Pack{}, err
 	}
@@ -242,7 +242,7 @@ func (s *packServiceImpl) UpdateByID(packID string, userID string, pu model.Pack
 	}
 
 	pack := model.Pack{}
-	err = copier.Copy(&packEntity, &pack)
+	err = copier.Copy(&pack, &packEntity)
 	if err != nil {
 		return model.Pack{}, err
 	}

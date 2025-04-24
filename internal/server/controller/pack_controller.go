@@ -3,12 +3,13 @@ package controller
 import (
 	"net/http"
 
-	"github.com/jinzhu/copier"
 	"locpack-backend/internal/server"
 	"locpack-backend/internal/server/dto"
 	"locpack-backend/internal/service"
 	"locpack-backend/internal/service/model"
 	"locpack-backend/pkg/adapter"
+
+	"github.com/jinzhu/copier"
 )
 
 type packControllerImpl struct {
@@ -63,7 +64,7 @@ func (c *packControllerImpl) GetPacksByQuery(ctx adapter.APIContext) {
 	}
 
 	var packsDTOs []dto.Pack
-	err = copier.Copy(&packs, &packsDTOs)
+	err = copier.Copy(&packsDTOs, &packs)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -115,7 +116,7 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	}
 
 	packCreate := model.PackCreate{}
-	err = copier.Copy(&packCreateDTO, &packCreate)
+	err = copier.Copy(&packCreate, &packCreateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -138,7 +139,7 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	}
 
 	packDTO := dto.Pack{}
-	err = copier.Copy(&pack, &packDTO)
+	err = copier.Copy(&packDTO, &pack)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -187,8 +188,8 @@ func (c *packControllerImpl) GetPacksFollowed(ctx adapter.APIContext) {
 		return
 	}
 
-	packsDTOs := dto.Pack{}
-	err = copier.Copy(&packs, &packsDTOs)
+	var packsDTOs []dto.Pack
+	err = copier.Copy(&packsDTOs, &packs)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -238,7 +239,7 @@ func (c *packControllerImpl) GetPacksCreated(ctx adapter.APIContext) {
 	}
 
 	var packsDTOs []dto.Pack
-	err = copier.Copy(&packs, &packsDTOs)
+	err = copier.Copy(&packsDTOs, &packs)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -300,7 +301,7 @@ func (c *packControllerImpl) GetPackByID(ctx adapter.APIContext) {
 	}
 
 	packDTO := dto.Pack{}
-	err = copier.Copy(&pack, &packDTO)
+	err = copier.Copy(&packDTO, &pack)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -364,7 +365,7 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	}
 
 	packUpdate := model.PackUpdate{}
-	err = copier.Copy(&packUpdateDTO, &packUpdate)
+	err = copier.Copy(&packUpdate, &packUpdateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -387,7 +388,7 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	}
 
 	packDTO := dto.Pack{}
-	err = copier.Copy(&pack, &packDTO)
+	err = copier.Copy(&packDTO, &pack)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{

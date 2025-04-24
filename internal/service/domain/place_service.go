@@ -36,8 +36,9 @@ func (s *placeServiceImpl) GetByID(placeID string, userID string) (model.Place, 
 		}
 	}
 
-	place := model.Place{}
-	err = copier.Copy(&placeEntity, &place)
+	var place model.Place
+
+	err = copier.Copy(&place, &placeEntity)
 	if err != nil {
 		return model.Place{}, err
 	}
@@ -63,8 +64,8 @@ func (s *placeServiceImpl) GetByNameOrAddress(query string, userID string) ([]mo
 			}
 		}
 
-		place := model.Place{}
-		err = copier.Copy(&placeEntity, &place)
+		var place model.Place
+		err = copier.Copy(&place, &placeEntity)
 		if err != nil {
 			return []model.Place{}, err
 		}
@@ -102,10 +103,12 @@ func (s *placeServiceImpl) Create(userID string, pc model.PlaceCreate) (model.Pl
 	}
 
 	place := model.Place{}
-	err = copier.Copy(&placeEntity, &place)
+	err = copier.Copy(&place, &placeEntity)
 	if err != nil {
 		return model.Place{}, err
 	}
+
+	place.Visited = pc.Visited
 
 	return place, err
 }
@@ -140,7 +143,7 @@ func (s *placeServiceImpl) UpdateByID(placeID string, userID string, pu model.Pl
 	}
 
 	place := model.Place{}
-	err = copier.Copy(&placeEntity, &place)
+	err = copier.Copy(&place, &placeEntity)
 	if err != nil {
 		return model.Place{}, err
 	}

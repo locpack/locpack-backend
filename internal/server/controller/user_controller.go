@@ -3,12 +3,13 @@ package controller
 import (
 	"net/http"
 
-	"github.com/jinzhu/copier"
 	"locpack-backend/internal/server"
 	"locpack-backend/internal/server/dto"
 	"locpack-backend/internal/service"
 	"locpack-backend/internal/service/model"
 	"locpack-backend/pkg/adapter"
+
+	"github.com/jinzhu/copier"
 )
 
 type userControllerImpl struct {
@@ -127,7 +128,7 @@ func (c *userControllerImpl) PutUserByID(ctx adapter.APIContext) {
 	}
 
 	userUpdate := model.UserUpdate{}
-	err = copier.Copy(&userUpdateDTO, &userUpdate)
+	err = copier.Copy(&userUpdate, &userUpdateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
