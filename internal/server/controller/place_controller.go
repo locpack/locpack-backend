@@ -3,12 +3,13 @@ package controller
 import (
 	"net/http"
 
-	"github.com/jinzhu/copier"
 	"locpack-backend/internal/server"
 	"locpack-backend/internal/server/dto"
 	"locpack-backend/internal/service"
 	"locpack-backend/internal/service/model"
 	"locpack-backend/pkg/adapter"
+
+	"github.com/jinzhu/copier"
 )
 
 type placeControllerImpl struct {
@@ -63,7 +64,7 @@ func (c *placeControllerImpl) GetPlacesByQuery(ctx adapter.APIContext) {
 	}
 
 	var placesDTOs []dto.Place
-	err = copier.Copy(&places, &placesDTOs)
+	err = copier.Copy(&placesDTOs, &places)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -115,7 +116,7 @@ func (c *placeControllerImpl) PostPlace(ctx adapter.APIContext) {
 	}
 
 	placeCreate := model.PlaceCreate{}
-	err = copier.Copy(&placeCreateDTO, &placeCreate)
+	err = copier.Copy(&placeCreate, &placeCreateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -138,7 +139,7 @@ func (c *placeControllerImpl) PostPlace(ctx adapter.APIContext) {
 	}
 
 	placeDTO := dto.Place{}
-	err = copier.Copy(&place, &placeDTO)
+	err = copier.Copy(&placeDTO, &place)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -200,7 +201,7 @@ func (c *placeControllerImpl) GetPlaceByID(ctx adapter.APIContext) {
 	}
 
 	placeDTO := dto.Place{}
-	err = copier.Copy(&place, &placeDTO)
+	err = copier.Copy(&placeDTO, &place)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -264,7 +265,7 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	}
 
 	placeUpdate := model.PlaceUpdate{}
-	err = copier.Copy(&placeUpdateDTO, &placeUpdate)
+	err = copier.Copy(&placeUpdate, &placeUpdateDTO)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -287,7 +288,7 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	}
 
 	placeDTO := dto.Place{}
-	err = copier.Copy(&place, &placeDTO)
+	err = copier.Copy(&placeDTO, &place)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{

@@ -23,7 +23,7 @@ func (s *userServiceImpl) GetByID(id string) (model.User, error) {
 	}
 
 	user := model.User{}
-	err = copier.Copy(&userEntity, &user)
+	err = copier.Copy(&user, &userEntity)
 	if err != nil {
 		return model.User{}, err
 	}
@@ -46,7 +46,7 @@ func (s *userServiceImpl) UpdateByID(id string, uu model.UserUpdate) (model.User
 	}
 
 	user := model.User{}
-	err = copier.Copy(&userEntity, &user)
+	err = copier.Copy(&user, &userEntity)
 	if err != nil {
 		return model.User{}, err
 	}
