@@ -76,7 +76,7 @@ func TestUserController_GetUserMy(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/users/my", nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/users/my", nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewUserController(&mockService)
@@ -159,7 +159,7 @@ func TestUserController_GetUserByID(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/users/"+tt.userID, nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/users/"+tt.userID, nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewUserController(&mockService)
@@ -255,7 +255,7 @@ func TestUserController_PutUserByID(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupControllerTest(t, "PUT", "/api/v1/users/"+tt.userID, requestBody)
+			ctx, recorder := setupControllerTest(t, http.MethodPut, "/api/v1/users/"+tt.userID, requestBody)
 
 			if tt.overrideBindJSON {
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte("{invalid-json")))

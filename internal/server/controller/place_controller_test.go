@@ -94,7 +94,7 @@ func TestPlaceController_GetPlacesByQuery(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/places?query="+tt.query, nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/places?query="+tt.query, nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPlaceController(&mockService)
@@ -208,7 +208,7 @@ func TestPlaceController_PostPlace(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupControllerTest(t, "POST", "/api/v1/places", requestBody)
+			ctx, recorder := setupControllerTest(t, http.MethodPost, "/api/v1/places", requestBody)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -316,7 +316,7 @@ func TestPlaceController_GetPlaceByID(t *testing.T) {
 			mockService := new(service.MockPlaceService)
 			controller := NewPlaceController(mockService)
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/places/"+tt.placeID, nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/places/"+tt.placeID, nil)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -445,7 +445,7 @@ func TestPlaceController_PutPlaceByID(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupControllerTest(t, "PUT", "/api/v1/places/"+tt.placeID, requestBody)
+			ctx, recorder := setupControllerTest(t, http.MethodPut, "/api/v1/places/"+tt.placeID, requestBody)
 
 			if tt.overrideBindJSON {
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte("{invalid-json")))

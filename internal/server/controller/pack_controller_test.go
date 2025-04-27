@@ -65,8 +65,7 @@ func TestPackController_GetPacksByQuery(t *testing.T) {
 			mockSetup: func(mock *service.MockPackService) {
 				packs := []model.Pack{
 					{
-						ID:   "pack1",
-						Name: "Test Pack",
+						Name: "test",
 					},
 				}
 
@@ -76,8 +75,7 @@ func TestPackController_GetPacksByQuery(t *testing.T) {
 			expectedBody: dto.ResponseWrapper{
 				Data: []dto.Pack{
 					{
-						ID:   "pack1",
-						Name: "Test Pack",
+						Name: "test",
 					},
 				},
 				Meta:   dto.Meta{Success: true},
@@ -93,7 +91,7 @@ func TestPackController_GetPacksByQuery(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs?query="+tt.query, nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/packs?query="+tt.query, nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPackController(&mockService)
@@ -207,7 +205,7 @@ func TestPackController_PostPack(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupControllerTest(t, "POST", "/api/v1/packs", requestBody)
+			ctx, recorder := setupControllerTest(t, http.MethodPost, "/api/v1/packs", requestBody)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -286,8 +284,7 @@ func TestPackController_GetPacksFollowed(t *testing.T) {
 			mockSetup: func(mock *service.MockPackService) {
 				packs := []model.Pack{
 					{
-						ID:   "pack1",
-						Name: "Test Pack",
+						Name: "test",
 					},
 				}
 
@@ -297,8 +294,7 @@ func TestPackController_GetPacksFollowed(t *testing.T) {
 			expectedBody: dto.ResponseWrapper{
 				Data: []dto.Pack{
 					{
-						ID:   "pack1",
-						Name: "Test Pack",
+						Name: "test",
 					},
 				},
 				Meta:   dto.Meta{Success: true},
@@ -314,7 +310,7 @@ func TestPackController_GetPacksFollowed(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs/followed", nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/packs/followed", nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPackController(&mockService)
@@ -384,8 +380,7 @@ func TestPackController_GetPacksCreated(t *testing.T) {
 			mockSetup: func(mock *service.MockPackService) {
 				packs := []model.Pack{
 					{
-						ID:   "pack1",
-						Name: "Test Pack",
+						Name: "test",
 					},
 				}
 
@@ -395,8 +390,7 @@ func TestPackController_GetPacksCreated(t *testing.T) {
 			expectedBody: dto.ResponseWrapper{
 				Data: []dto.Pack{
 					{
-						ID:   "pack1",
-						Name: "Test Pack",
+						Name: "test",
 					},
 				},
 				Meta:   dto.Meta{Success: true},
@@ -412,7 +406,7 @@ func TestPackController_GetPacksCreated(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs/created", nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/packs/created", nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPackController(&mockService)
@@ -511,7 +505,7 @@ func TestPackController_GetPackByID(t *testing.T) {
 			mockService := new(service.MockPackService)
 			controller := NewPackController(mockService)
 
-			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs/"+tt.packID, nil)
+			ctx, recorder := setupControllerTest(t, http.MethodGet, "/api/v1/packs/"+tt.packID, nil)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -640,7 +634,7 @@ func TestPackController_PutPackByID(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupControllerTest(t, "PUT", "/api/v1/packs/"+tt.packID, requestBody)
+			ctx, recorder := setupControllerTest(t, http.MethodPut, "/api/v1/packs/"+tt.packID, requestBody)
 
 			if tt.overrideBindJSON {
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte("{invalid-json")))
