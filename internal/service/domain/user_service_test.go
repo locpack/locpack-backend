@@ -7,7 +7,6 @@ import (
 	"github.com/google/uuid"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
-
 	"locpack-backend/internal/service/model"
 	"locpack-backend/internal/storage"
 	"locpack-backend/internal/storage/entity"
@@ -33,12 +32,12 @@ func TestUserService_GetByID(t *testing.T) {
 				userRepo.EXPECT().GetByPublicID(userID).Return(entity.User{
 					ID:       userUUID,
 					PublicID: userID,
-					Username: "testuser",
+					Username: "test-user",
 				}, nil)
 			},
 			expected: model.User{
 				ID:       userID,
-				Username: "testuser",
+				Username: "test-user",
 			},
 			expectError: false,
 		},
@@ -55,12 +54,11 @@ func TestUserService_GetByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			userRepo := storage.NewMockUserRepository(t)
+			_, _, userSvc, _, _, userRepo := setupServiceTest(t)
 			tt.setupMocks(userRepo)
 
-			svc := NewUserService(userRepo)
+			result, err := userSvc.GetByID(tt.userID)
 
-			result, err := svc.GetByID(tt.userID)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -90,22 +88,22 @@ func TestUserService_UpdateByID(t *testing.T) {
 			name:   "success",
 			userID: userID,
 			input: model.UserUpdate{
-				Username: "updateduser",
+				Username: "updated-user",
 			},
 			setupMocks: func(userRepo *storage.MockUserRepository) {
 				userRepo.EXPECT().GetByPublicID(userID).Return(entity.User{
 					ID:       userUUID,
 					PublicID: userID,
-					Username: "olduser",
+					Username: "old-user",
 				}, nil)
 
 				userRepo.EXPECT().Update(mock.MatchedBy(func(u entity.User) bool {
-					return u.Username == "updateduser" && u.PublicID == "updateduser"
+					return u.Username == "updated-user" && u.PublicID == "updated-user"
 				})).Return(nil)
 			},
 			expected: model.User{
-				ID:       "updateduser",
-				Username: "updateduser",
+				ID:       "updated-user",
+				Username: "updated-user",
 			},
 			expectError: false,
 		},
@@ -125,13 +123,13 @@ func TestUserService_UpdateByID(t *testing.T) {
 			name:   "update fails",
 			userID: userID,
 			input: model.UserUpdate{
-				Username: "baduser",
+				Username: "bad-user",
 			},
 			setupMocks: func(userRepo *storage.MockUserRepository) {
 				userRepo.EXPECT().GetByPublicID(userID).Return(entity.User{
 					ID:       userUUID,
 					PublicID: userID,
-					Username: "olduser",
+					Username: "old-user",
 				}, nil)
 
 				userRepo.EXPECT().Update(mock.Anything).Return(errors.New("update failed"))
@@ -143,12 +141,11 @@ func TestUserService_UpdateByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			userRepo := storage.NewMockUserRepository(t)
+			_, _, userSvc, _, _, userRepo := setupServiceTest(t)
 			tt.setupMocks(userRepo)
 
-			svc := NewUserService(userRepo)
+			result, err := userSvc.UpdateByID(tt.userID, tt.input)
 
-			result, err := svc.UpdateByID(tt.userID, tt.input)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {

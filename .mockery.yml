@@ -1,19 +1,20 @@
 all: false
-dir: '{{.InterfaceDir}}'
 filename: mocks.go
 force-file-write: true
 formatter: goimports
 log-level: info
-structname: '{{.Mock}}{{.InterfaceName}}'
-pkgname: '{{.SrcPackageName}}'
+structname: "{{ .Mock }}{{ .InterfaceName }}"
+pkgname: "{{ .SrcPackageName }}"
 recursive: false
 require-template-schema-exists: true
 template: testify
-template-schema: '{{.Template}}.schema.json'
+template-schema: "{{ .Template }}.schema.json"
 packages:
   locpack-backend/internal/storage:
     config:
       all: true
+      dir: ./internal/storage
   locpack-backend/internal/service:
     config:
       all: true
+      dir: ./internal/service

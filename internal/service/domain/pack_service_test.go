@@ -13,23 +13,10 @@ import (
 	"github.com/stretchr/testify/mock"
 )
 
-func setupService(t *testing.T) (*packServiceImpl, *storage.MockPackRepository, *storage.MockPlaceRepository, *storage.MockUserRepository) {
-	t.Helper()
-
-	var (
-		packRepo  = new(storage.MockPackRepository)
-		placeRepo = new(storage.MockPlaceRepository)
-		userRepo  = new(storage.MockUserRepository)
-		svc       = NewPackService(packRepo, placeRepo, userRepo).(*packServiceImpl)
-	)
-
-	return svc, packRepo, placeRepo, userRepo
-}
-
 func TestPackService_GetByID(t *testing.T) {
 	t.Parallel()
 
-	svc, packRepo, _, _ := setupService(t)
+	packSvc, _, _, packRepo, _, _ := setupServiceTest(t)
 
 	userID := "user1"
 	packID := "pack1"
@@ -93,12 +80,15 @@ func TestPackService_GetByID(t *testing.T) {
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			tt.setup()
-			got, err := svc.GetByID(packID, userID)
+
+			got, err := packSvc.GetByID(packID, userID)
+
 			if tt.wantErr {
 				assert.Error(t, err)
 			} else {
 				assert.Equal(t, tt.expected, got)
 			}
+
 			packRepo.AssertExpectations(t)
 		})
 	}
@@ -165,10 +155,11 @@ func TestPackService_GetByNameOrAuthor(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc, packRepo, _, _ := setupService(t)
+			packSvc, _, _, packRepo, _, _ := setupServiceTest(t)
 			packRepo.On("GetByNameOrAuthorFull", tt.query).Return(tt.mockReturn, tt.mockError).Once()
 
-			res, err := svc.GetByNameOrAuthor(tt.query, tt.userID)
+			res, err := packSvc.GetByNameOrAuthor(tt.query, tt.userID)
+
 			if tt.expectErr {
 				assert.Error(t, err)
 				return
@@ -224,10 +215,11 @@ func TestPackService_GetFollowedByUserID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc, _, _, userRepo := setupService(t)
+			packSvc, _, _, _, _, userRepo := setupServiceTest(t)
 			userRepo.On("GetByPublicIDFull", tt.userID).Return(tt.mockUser, tt.mockError).Once()
 
-			res, err := svc.GetFollowedByUserID(tt.userID)
+			res, err := packSvc.GetFollowedByUserID(tt.userID)
+
 			if tt.expectErr {
 				assert.Error(t, err)
 				return
@@ -282,10 +274,11 @@ func TestPackService_GetCreatedByUserID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc, _, _, userRepo := setupService(t)
+			packSvc, _, _, _, _, userRepo := setupServiceTest(t)
 			userRepo.On("GetByPublicIDFull", tt.userID).Return(tt.mockUser, tt.mockError).Once()
 
-			res, err := svc.GetCreatedByUserID(tt.userID)
+			res, err := packSvc.GetCreatedByUserID(tt.userID)
+
 			if tt.expectErr {
 				assert.Error(t, err)
 				return
@@ -332,10 +325,10 @@ func TestPackService_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc, packRepo, _, userRepo := setupService(t)
+			packSvc, _, _, packRepo, _, userRepo := setupServiceTest(t)
 			tt.setupMocks(userRepo, packRepo)
 
-			pack, err := svc.Create("user1", model.PackCreate{Name: "My Pack"})
+			pack, err := packSvc.Create("user1", model.PackCreate{Name: "My Pack"})
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -428,10 +421,10 @@ func TestPackService_UpdateByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			svc, packRepo, placeRepo, userRepo := setupService(t)
+			packSvc, _, _, packRepo, placeRepo, userRepo := setupServiceTest(t)
 			tt.setupMocks(userRepo, packRepo, placeRepo)
 
-			updated, err := svc.UpdateByID("pack1", "user1", tt.update)
+			updated, err := packSvc.UpdateByID("pack1", "user1", tt.update)
 
 			if tt.wantErr {
 				assert.Error(t, err)
@@ -512,17 +505,12 @@ func TestPackService_GetPlacesByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			packRepo := new(storage.MockPackRepository)
-			userRepo := new(storage.MockUserRepository)
-			placeRepo := new(storage.MockPlaceRepository)
-
+			packSvc, _, _, packRepo, _, _ := setupServiceTest(t)
 			if tt.mockSetup != nil {
 				tt.mockSetup(packRepo)
 			}
 
-			svc := NewPackService(packRepo, placeRepo, userRepo)
-
-			got, err := svc.GetPlacesByID(tt.packID, tt.userID)
+			got, err := packSvc.GetPlacesByID(tt.packID, tt.userID)
 
 			if tt.expectErr {
 				assert.Error(t, err)
@@ -542,9 +530,9 @@ func TestPackService_GetPlacesByID(t *testing.T) {
 }
 
 func TestPackService_UpdateByID_ErrorOnCreateStatus(t *testing.T) {
-	svc, _, _, _ := setupService(t)
+	packSvc, _, _, _, _, _ := setupServiceTest(t)
 
-	_, err := svc.UpdateByID("pack1", "user1", model.PackUpdate{
+	_, err := packSvc.UpdateByID("pack1", "user1", model.PackUpdate{
 		Status: pack_status.Created,
 	})
 

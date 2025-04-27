@@ -76,10 +76,11 @@ func TestUserController_GetUserMy(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/users/my", nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/users/my", nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewUserController(&mockService)
+
 			controller.GetUserMy(ctx)
 
 			var body dto.ResponseWrapper
@@ -158,10 +159,11 @@ func TestUserController_GetUserByID(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/users/"+tt.userID, nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/users/"+tt.userID, nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewUserController(&mockService)
+
 			controller.GetUserByID(ctx)
 
 			var body dto.ResponseWrapper
@@ -192,7 +194,7 @@ func TestUserController_GetUserByID(t *testing.T) {
 func TestUserController_PutUserByID(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	testCases := []struct {
 		name             string
 		userID           string
 		requestBody      any
@@ -200,9 +202,7 @@ func TestUserController_PutUserByID(t *testing.T) {
 		expectedCode     int
 		expectedBody     dto.ResponseWrapper
 		overrideBindJSON bool
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:             "invalid JSON",
 			userID:           "123",
@@ -255,7 +255,7 @@ func TestUserController_PutUserByID(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupTestContext(t, "PUT", "/api/v1/users/"+tt.userID, requestBody)
+			ctx, recorder := setupControllerTest(t, "PUT", "/api/v1/users/"+tt.userID, requestBody)
 
 			if tt.overrideBindJSON {
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte("{invalid-json")))

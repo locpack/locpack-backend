@@ -82,14 +82,11 @@ func TestPlaceService_GetByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := storage.NewMockPlaceRepository(t)
-			tt.setupMocks(mockRepo)
+			_, placeSvc, _, _, placeRepo, _ := setupServiceTest(t)
+			tt.setupMocks(placeRepo)
 
-			service := &placeServiceImpl{
-				placeRepository: mockRepo,
-			}
+			result, err := placeSvc.GetByID(tt.placeID, tt.userID)
 
-			result, err := service.GetByID(tt.placeID, tt.userID)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -202,14 +199,11 @@ func TestPlaceService_GetByNameOrAddress(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			mockRepo := storage.NewMockPlaceRepository(t)
-			tt.setupMocks(mockRepo)
+			_, placeSvc, _, _, placeRepo, _ := setupServiceTest(t)
+			tt.setupMocks(placeRepo)
 
-			service := &placeServiceImpl{
-				placeRepository: mockRepo,
-			}
+			result, err := placeSvc.GetByNameOrAddress(tt.query, tt.userID)
 
-			result, err := service.GetByNameOrAddress(tt.query, tt.userID)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -330,16 +324,11 @@ func TestPlaceService_Create(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			placeRepo := storage.NewMockPlaceRepository(t)
-			userRepo := storage.NewMockUserRepository(t)
+			_, placeSvc, _, _, placeRepo, userRepo := setupServiceTest(t)
 			tt.setupMocks(placeRepo, userRepo)
 
-			service := &placeServiceImpl{
-				placeRepository: placeRepo,
-				userRepository:  userRepo,
-			}
+			result, err := placeSvc.Create(tt.userID, tt.input)
 
-			result, err := service.Create(tt.userID, tt.input)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {
@@ -510,16 +499,11 @@ func TestPlaceService_UpdateByID(t *testing.T) {
 
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			placeRepo := storage.NewMockPlaceRepository(t)
-			userRepo := storage.NewMockUserRepository(t)
+			_, placeSvc, _, _, placeRepo, userRepo := setupServiceTest(t)
 			tt.setupMocks(placeRepo, userRepo)
 
-			service := &placeServiceImpl{
-				placeRepository: placeRepo,
-				userRepository:  userRepo,
-			}
+			result, err := placeSvc.UpdateByID(tt.placeID, tt.userID, tt.input)
 
-			result, err := service.UpdateByID(tt.placeID, tt.userID, tt.input)
 			if tt.expectError {
 				assert.Error(t, err)
 			} else {

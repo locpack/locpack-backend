@@ -94,10 +94,11 @@ func TestPlaceController_GetPlacesByQuery(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/places?query="+tt.query, nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/places?query="+tt.query, nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPlaceController(&mockService)
+
 			controller.GetPlacesByQuery(ctx)
 
 			var body dto.ResponseWrapper
@@ -128,7 +129,11 @@ func TestPlaceController_GetPlacesByQuery(t *testing.T) {
 func TestPlaceController_PostPlace(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	validInput := dto.PlaceCreate{
+		Name: "Test Place",
+	}
+
+	testCases := []struct {
 		name             string
 		userID           string
 		requestBody      any
@@ -136,13 +141,7 @@ func TestPlaceController_PostPlace(t *testing.T) {
 		expectedBody     dto.ResponseWrapper
 		expectedCode     int
 		overrideBindJSON bool
-	}
-
-	validInput := dto.PlaceCreate{
-		Name: "Test Place",
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:         "missing userID",
 			userID:       "",
@@ -209,7 +208,7 @@ func TestPlaceController_PostPlace(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupTestContext(t, "POST", "/api/v1/places", requestBody)
+			ctx, recorder := setupControllerTest(t, "POST", "/api/v1/places", requestBody)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -253,16 +252,14 @@ func TestPlaceController_PostPlace(t *testing.T) {
 func TestPlaceController_GetPlaceByID(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	testCases := []struct {
 		name         string
 		userID       string
 		placeID      string
 		mockSetup    func(s *service.MockPlaceService)
 		expectedBody dto.ResponseWrapper
 		expectedCode int
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:         "missing userID",
 			userID:       "",
@@ -319,7 +316,7 @@ func TestPlaceController_GetPlaceByID(t *testing.T) {
 			mockService := new(service.MockPlaceService)
 			controller := NewPlaceController(mockService)
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/places/"+tt.placeID, nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/places/"+tt.placeID, nil)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -359,7 +356,7 @@ func TestPlaceController_GetPlaceByID(t *testing.T) {
 func TestPlaceController_PutPlaceByID(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	testCases := []struct {
 		name             string
 		userID           string
 		placeID          string
@@ -368,9 +365,7 @@ func TestPlaceController_PutPlaceByID(t *testing.T) {
 		expectedCode     int
 		expectedBody     dto.ResponseWrapper
 		overrideBindJSON bool
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:         "missing userID",
 			userID:       "",
@@ -450,7 +445,7 @@ func TestPlaceController_PutPlaceByID(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupTestContext(t, "PUT", "/api/v1/places/"+tt.placeID, requestBody)
+			ctx, recorder := setupControllerTest(t, "PUT", "/api/v1/places/"+tt.placeID, requestBody)
 
 			if tt.overrideBindJSON {
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte("{invalid-json")))

@@ -8,13 +8,12 @@ import (
 	"net/http"
 	"testing"
 
-	"locpack-backend/internal/server/dto"
-	"locpack-backend/internal/service"
-	"locpack-backend/internal/service/model"
-
 	"github.com/gin-gonic/gin"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/mock"
+	"locpack-backend/internal/server/dto"
+	"locpack-backend/internal/service"
+	"locpack-backend/internal/service/model"
 )
 
 func TestPackController_GetPacksByQuery(t *testing.T) {
@@ -94,10 +93,11 @@ func TestPackController_GetPacksByQuery(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/packs?query="+tt.query, nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs?query="+tt.query, nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPackController(&mockService)
+
 			controller.GetPacksByQuery(ctx)
 
 			var body dto.ResponseWrapper
@@ -128,7 +128,11 @@ func TestPackController_GetPacksByQuery(t *testing.T) {
 func TestPackController_PostPack(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	validInput := dto.PackCreate{
+		Name: "Test Pack",
+	}
+
+	testCases := []struct {
 		name             string
 		userID           string
 		requestBody      any
@@ -136,13 +140,7 @@ func TestPackController_PostPack(t *testing.T) {
 		expectedBody     dto.ResponseWrapper
 		expectedCode     int
 		overrideBindJSON bool
-	}
-
-	validInput := dto.PackCreate{
-		Name: "Test Pack",
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:         "missing userID",
 			userID:       "",
@@ -209,7 +207,7 @@ func TestPackController_PostPack(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupTestContext(t, "POST", "/api/v1/packs", requestBody)
+			ctx, recorder := setupControllerTest(t, "POST", "/api/v1/packs", requestBody)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -316,10 +314,11 @@ func TestPackController_GetPacksFollowed(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/packs/followed", nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs/followed", nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPackController(&mockService)
+
 			controller.GetPacksFollowed(ctx)
 
 			var body dto.ResponseWrapper
@@ -413,10 +412,11 @@ func TestPackController_GetPacksCreated(t *testing.T) {
 				tt.mockSetup(&mockService)
 			}
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/packs/created", nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs/created", nil)
 			ctx.Set("userID", tt.userID)
 
 			controller := NewPackController(&mockService)
+
 			controller.GetPacksCreated(ctx)
 
 			var body dto.ResponseWrapper
@@ -447,16 +447,14 @@ func TestPackController_GetPacksCreated(t *testing.T) {
 func TestPackController_GetPackByID(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	testCases := []struct {
 		name         string
 		userID       string
 		packID       string
 		mockSetup    func(s *service.MockPackService)
 		expectedBody dto.ResponseWrapper
 		expectedCode int
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:         "missing userID",
 			userID:       "",
@@ -513,7 +511,7 @@ func TestPackController_GetPackByID(t *testing.T) {
 			mockService := new(service.MockPackService)
 			controller := NewPackController(mockService)
 
-			ctx, recorder := setupTestContext(t, "GET", "/api/v1/packs/"+tt.packID, nil)
+			ctx, recorder := setupControllerTest(t, "GET", "/api/v1/packs/"+tt.packID, nil)
 
 			if tt.userID != "" {
 				ctx.Set("userID", tt.userID)
@@ -553,7 +551,7 @@ func TestPackController_GetPackByID(t *testing.T) {
 func TestPackController_PutPackByID(t *testing.T) {
 	t.Parallel()
 
-	type testCase struct {
+	testCases := []struct {
 		name             string
 		userID           string
 		packID           string
@@ -562,9 +560,7 @@ func TestPackController_PutPackByID(t *testing.T) {
 		expectedCode     int
 		expectedBody     dto.ResponseWrapper
 		overrideBindJSON bool
-	}
-
-	testCases := []testCase{
+	}{
 		{
 			name:         "missing userID",
 			userID:       "",
@@ -644,7 +640,7 @@ func TestPackController_PutPackByID(t *testing.T) {
 				requestBody = bytes.NewBuffer(bodyBytes)
 			}
 
-			ctx, recorder := setupTestContext(t, "PUT", "/api/v1/packs/"+tt.packID, requestBody)
+			ctx, recorder := setupControllerTest(t, "PUT", "/api/v1/packs/"+tt.packID, requestBody)
 
 			if tt.overrideBindJSON {
 				ctx.Request.Body = io.NopCloser(bytes.NewBuffer([]byte("{invalid-json")))
