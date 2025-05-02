@@ -16,22 +16,22 @@ func NewUserRepository(db adapter.Database) storage.UserRepository {
 
 func (r *userRepoImpl) GetByPublicID(id string) (entity.User, error) {
 	var u entity.User
-	result := r.db.First(u, "public_id = ?", id)
+	result := r.db.First(&u, "public_id = ?", id)
 	return u, result.Error
 }
 
 func (r *userRepoImpl) GetByPublicIDFull(id string) (entity.User, error) {
 	var u entity.User
-	result := r.db.Preload("FollowedPacks").Preload("CreatedPacks").First(u, "public_id = ?", id)
+	result := r.db.Preload("FollowedPacks").Preload("CreatedPacks").First(&u, "public_id = ?", id)
 	return u, result.Error
 }
 
 func (r *userRepoImpl) Create(u entity.User) error {
-	result := r.db.Create(u)
+	result := r.db.Create(&u)
 	return result.Error
 }
 
 func (r *userRepoImpl) Update(u entity.User) error {
-	result := r.db.Save(u)
+	result := r.db.Save(&u)
 	return result.Error
 }
