@@ -23,5 +23,10 @@ type PackController interface {
 type UserController interface {
 	GetUserMy(ctx adapter.APIContext)
 	GetUserByID(ctx adapter.APIContext)
-	PutUserByID(ctx adapter.APIContext)
+}
+
+type AuthController interface {
+	Register(ctx adapter.APIContext)
+	Login(ctx adapter.APIContext)
+	Refresh(ctx adapter.APIContext)
 }

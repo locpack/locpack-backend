@@ -30,26 +30,3 @@ func (s *userServiceImpl) GetByID(id string) (model.User, error) {
 
 	return user, err
 }
-
-func (s *userServiceImpl) UpdateByID(id string, uu model.UserUpdate) (model.User, error) {
-	userEntity, err := s.repository.GetByPublicID(id)
-	if err != nil {
-		return model.User{}, err
-	}
-
-	userEntity.Username = uu.Username
-	userEntity.PublicID = uu.Username
-
-	err = s.repository.Update(userEntity)
-	if err != nil {
-		return model.User{}, err
-	}
-
-	user := model.User{}
-	err = copier.Copy(&user, &userEntity)
-	if err != nil {
-		return model.User{}, err
-	}
-
-	return user, err
-}

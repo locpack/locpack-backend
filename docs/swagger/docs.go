@@ -18,13 +18,124 @@ const docTemplate = `{
     "host": "{{.Host}}",
     "basePath": "{{.BasePath}}",
     "paths": {
-        "/api/v1/packs": {
-            "get": {
-                "security": [
+        "/api/v1/auth/login": {
+            "post": {
+                "description": "Authenticate user and return token",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User login",
+                "parameters": [
                     {
-                        "BearerAuth": []
+                        "description": "Login details",
+                        "name": "login",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Login"
+                        }
                     }
                 ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.AccessToken"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.AccessToken"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/auth/register": {
+            "post": {
+                "description": "Register new user account",
+                "tags": [
+                    "Auth"
+                ],
+                "summary": "User registration",
+                "parameters": [
+                    {
+                        "description": "Registration details",
+                        "name": "register",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/locpack-backend_internal_server_dto.Register"
+                        }
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "OK",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.AccessToken"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "allOf": [
+                                {
+                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
+                                },
+                                {
+                                    "type": "object",
+                                    "properties": {
+                                        "data": {
+                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.AccessToken"
+                                        }
+                                    }
+                                }
+                            ]
+                        }
+                    }
+                }
+            }
+        },
+        "/api/v1/packs": {
+            "get": {
                 "description": "Get packs matching name or author",
                 "tags": [
                     "Packs"
@@ -264,11 +375,6 @@ const docTemplate = `{
         },
         "/api/v1/packs/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Get a specific pack by its ID",
                 "tags": [
                     "Packs"
@@ -393,11 +499,6 @@ const docTemplate = `{
         },
         "/api/v1/places": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Get places matching name or address",
                 "tags": [
                     "Places"
@@ -467,7 +568,7 @@ const docTemplate = `{
                 "tags": [
                     "Places"
                 ],
-                "summary": "Create a new place",
+                "summary": "Register a new place",
                 "parameters": [
                     {
                         "description": "Place data",
@@ -521,11 +622,6 @@ const docTemplate = `{
         },
         "/api/v1/places/{id}": {
             "get": {
-                "security": [
-                    {
-                        "BearerAuth": []
-                    }
-                ],
                 "description": "Get a specific place by its ID",
                 "tags": [
                     "Places"
@@ -754,73 +850,24 @@ const docTemplate = `{
                         }
                     }
                 }
-            },
-            "put": {
-                "description": "Update user information",
-                "tags": [
-                    "Users"
-                ],
-                "summary": "Update user by ID",
-                "parameters": [
-                    {
-                        "type": "string",
-                        "description": "User ID",
-                        "name": "id",
-                        "in": "path",
-                        "required": true
-                    },
-                    {
-                        "description": "User data",
-                        "name": "user",
-                        "in": "body",
-                        "required": true,
-                        "schema": {
-                            "$ref": "#/definitions/locpack-backend_internal_server_dto.UserUpdate"
-                        }
-                    }
-                ],
-                "responses": {
-                    "200": {
-                        "description": "OK",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    },
-                    "400": {
-                        "description": "Bad Request",
-                        "schema": {
-                            "allOf": [
-                                {
-                                    "$ref": "#/definitions/locpack-backend_internal_server_dto.ResponseWrapper"
-                                },
-                                {
-                                    "type": "object",
-                                    "properties": {
-                                        "data": {
-                                            "$ref": "#/definitions/locpack-backend_internal_server_dto.User"
-                                        }
-                                    }
-                                }
-                            ]
-                        }
-                    }
-                }
             }
         }
     },
     "definitions": {
+        "locpack-backend_internal_server_dto.AccessToken": {
+            "type": "object",
+            "properties": {
+                "expiresIn": {
+                    "type": "number"
+                },
+                "refreshToken": {
+                    "type": "string"
+                },
+                "value": {
+                    "type": "string"
+                }
+            }
+        },
         "locpack-backend_internal_server_dto.Error": {
             "type": "object",
             "properties": {
@@ -828,6 +875,17 @@ const docTemplate = `{
                     "type": "string"
                 },
                 "message": {
+                    "type": "string"
+                }
+            }
+        },
+        "locpack-backend_internal_server_dto.Login": {
+            "type": "object",
+            "properties": {
+                "password": {
+                    "type": "string"
+                },
+                "username": {
                     "type": "string"
                 }
             }
@@ -933,6 +991,20 @@ const docTemplate = `{
                 }
             }
         },
+        "locpack-backend_internal_server_dto.Register": {
+            "type": "object",
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
+                },
+                "username": {
+                    "type": "string"
+                }
+            }
+        },
         "locpack-backend_internal_server_dto.ResponseWrapper": {
             "type": "object",
             "properties": {
@@ -958,14 +1030,13 @@ const docTemplate = `{
                     "type": "string"
                 }
             }
-        },
-        "locpack-backend_internal_server_dto.UserUpdate": {
-            "type": "object",
-            "properties": {
-                "username": {
-                    "type": "string"
-                }
-            }
+        }
+    },
+    "securityDefinitions": {
+        "BearerAuth": {
+            "type": "apiKey",
+            "name": "Authorization",
+            "in": "header"
         }
     }
 }`

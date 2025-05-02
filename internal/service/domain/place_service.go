@@ -1,6 +1,8 @@
 package domain
 
 import (
+	"errors"
+
 	"locpack-backend/internal/service"
 	"locpack-backend/internal/service/model"
 	"locpack-backend/internal/storage"
@@ -122,6 +124,10 @@ func (s *placeServiceImpl) UpdateByID(placeID string, userID string, pu model.Pl
 	placeEntity, err := s.placeRepository.GetByPublicIDFull(placeID)
 	if err != nil {
 		return model.Place{}, err
+	}
+
+	if placeEntity.Author.ID != userEntity.ID {
+		return model.Place{}, errors.New("user is not author")
 	}
 
 	placeEntity.Name = pu.Name

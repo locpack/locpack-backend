@@ -169,7 +169,7 @@ func TestPlaceController_PostPlace(t *testing.T) {
 			userID:      "123",
 			requestBody: validInput,
 			mockSetup: func(s *service.MockPlaceService) {
-				s.On("Create", "123", mock.Anything).Return(model.Place{}, errors.New("service error"))
+				s.On("Register", "123", mock.Anything).Return(model.Place{}, errors.New("service error"))
 			},
 			expectedCode: http.StatusBadRequest,
 			expectedBody: dto.ResponseWrapper{
@@ -183,7 +183,7 @@ func TestPlaceController_PostPlace(t *testing.T) {
 			userID:      "123",
 			requestBody: validInput,
 			mockSetup: func(s *service.MockPlaceService) {
-				s.On("Create", "123", mock.Anything).Return(model.Place{Name: "Test Place"}, nil)
+				s.On("Register", "123", mock.Anything).Return(model.Place{Name: "Test Place"}, nil)
 			},
 			expectedCode: http.StatusOK,
 			expectedBody: dto.ResponseWrapper{

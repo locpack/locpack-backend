@@ -24,22 +24,12 @@ func NewPlaceController(service service.PlaceService) server.PlaceController {
 // @Summary Search places by query
 // @Description Get places matching name or address
 // @Tags Places
-// @Security BearerAuth
 // @Param query query string true "Search query"
 // @Success 200 {object} dto.ResponseWrapper{data=[]dto.Place}
 // @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Place}
 // @Router /api/v1/places [get]
 func (c *placeControllerImpl) GetPlacesByQuery(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
-		errors := []dto.Error{{Message: "Some error", Code: "000"}}
-		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
-			Meta:   dto.Meta{Success: false},
-			Errors: errors,
-		})
-		return
-	}
+	myUserID := ctx.GetString("myUserID")
 
 	query := ctx.Query("query")
 	if len(query) == 0 {
@@ -52,7 +42,7 @@ func (c *placeControllerImpl) GetPlacesByQuery(ctx adapter.APIContext) {
 		return
 	}
 
-	places, err := c.service.GetByNameOrAddress(query, userID)
+	places, err := c.service.GetByNameOrAddress(query, myUserID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -83,7 +73,7 @@ func (c *placeControllerImpl) GetPlacesByQuery(ctx adapter.APIContext) {
 }
 
 // PostPlace
-// @Summary Create a new place
+// @Summary Register a new place
 // @Description Add a new place to the database
 // @Tags Places
 // @Security BearerAuth
@@ -92,8 +82,8 @@ func (c *placeControllerImpl) GetPlacesByQuery(ctx adapter.APIContext) {
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.Place}
 // @Router /api/v1/places [post]
 func (c *placeControllerImpl) PostPlace(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
+	myUserID := ctx.GetString("userID")
+	if len(myUserID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
 			Data:   nil,
@@ -127,7 +117,7 @@ func (c *placeControllerImpl) PostPlace(ctx adapter.APIContext) {
 		return
 	}
 
-	place, err := c.service.Create(userID, placeCreate)
+	place, err := c.service.Create(myUserID, placeCreate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
@@ -161,39 +151,27 @@ func (c *placeControllerImpl) PostPlace(ctx adapter.APIContext) {
 // @Summary Get place by ID
 // @Description Get a specific place by its ID
 // @Tags Places
-// @Security BearerAuth
 // @Param id path string true "Place ID"
 // @Success 200 {object} dto.ResponseWrapper{data=dto.Place}
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.Place}
 // @Router /api/v1/places/{id} [get]
 func (c *placeControllerImpl) GetPlaceByID(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
-		errors := []dto.Error{{Message: "Some error", Code: "000"}}
-		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
-			Meta:   dto.Meta{Success: false},
-			Errors: errors,
-		})
-		return
-	}
+	myUserID := ctx.GetString("userID")
 
 	placeID := ctx.Param("id")
 	if len(placeID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	place, err := c.service.GetByID(placeID, userID)
+	place, err := c.service.GetByID(placeID, myUserID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -205,7 +183,6 @@ func (c *placeControllerImpl) GetPlaceByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -213,9 +190,8 @@ func (c *placeControllerImpl) GetPlaceByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placeDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: placeDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
@@ -230,11 +206,10 @@ func (c *placeControllerImpl) GetPlaceByID(ctx adapter.APIContext) {
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.Place}
 // @Router /api/v1/places/{id} [put]
 func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
+	myUserID := ctx.GetString("myUserID")
+	if len(myUserID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -245,7 +220,6 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	if len(placeID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -257,7 +231,6 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -269,18 +242,16 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	place, err := c.service.UpdateByID(placeID, userID, placeUpdate)
+	place, err := c.service.UpdateByID(placeID, myUserID, placeUpdate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -292,7 +263,6 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -300,8 +270,7 @@ func (c *placeControllerImpl) PutPlaceByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   placeDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: placeDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }

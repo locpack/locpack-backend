@@ -302,7 +302,7 @@ func TestPackService_Create(t *testing.T) {
 			name: "success",
 			setupMocks: func(userRepo *storage.MockUserRepository, packRepo *storage.MockPackRepository) {
 				userRepo.On("GetByPublicID", "user1").Return(entity.User{PublicID: "user1"}, nil)
-				packRepo.On("Create", mock.AnythingOfType("entity.Pack")).Return(nil)
+				packRepo.On("Register", mock.AnythingOfType("entity.Pack")).Return(nil)
 			},
 			wantErr: false,
 		},
@@ -317,7 +317,7 @@ func TestPackService_Create(t *testing.T) {
 			name: "pack repo create error",
 			setupMocks: func(userRepo *storage.MockUserRepository, packRepo *storage.MockPackRepository) {
 				userRepo.On("GetByPublicID", "user1").Return(entity.User{PublicID: "user1"}, nil)
-				packRepo.On("Create", mock.AnythingOfType("entity.Pack")).Return(errors.New("db error"))
+				packRepo.On("Register", mock.AnythingOfType("entity.Pack")).Return(errors.New("db error"))
 			},
 			wantErr: true,
 		},

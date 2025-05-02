@@ -1,9 +1,25 @@
 definitions:
+  locpack-backend_internal_server_dto.AccessToken:
+    properties:
+      expiresIn:
+        type: number
+      refreshToken:
+        type: string
+      value:
+        type: string
+    type: object
   locpack-backend_internal_server_dto.Error:
     properties:
       code:
         type: string
       message:
+        type: string
+    type: object
+  locpack-backend_internal_server_dto.Login:
+    properties:
+      password:
+        type: string
+      username:
         type: string
     type: object
   locpack-backend_internal_server_dto.Meta:
@@ -71,6 +87,15 @@ definitions:
       visited:
         type: boolean
     type: object
+  locpack-backend_internal_server_dto.Register:
+    properties:
+      email:
+        type: string
+      password:
+        type: string
+      username:
+        type: string
+    type: object
   locpack-backend_internal_server_dto.ResponseWrapper:
     properties:
       data: {}
@@ -88,11 +113,6 @@ definitions:
       username:
         type: string
     type: object
-  locpack-backend_internal_server_dto.UserUpdate:
-    properties:
-      username:
-        type: string
-    type: object
 host: localhost:8080
 info:
   contact:
@@ -102,6 +122,70 @@ info:
   title: Locpack API
   version: "1.0"
 paths:
+  /api/v1/auth/login:
+    post:
+      description: Authenticate user and return token
+      parameters:
+      - description: Login details
+        in: body
+        name: login
+        required: true
+        schema:
+          $ref: '#/definitions/locpack-backend_internal_server_dto.Login'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.AccessToken'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.AccessToken'
+              type: object
+      summary: User login
+      tags:
+      - Auth
+  /api/v1/auth/register:
+    post:
+      description: Register new user account
+      parameters:
+      - description: Registration details
+        in: body
+        name: register
+        required: true
+        schema:
+          $ref: '#/definitions/locpack-backend_internal_server_dto.Register'
+      responses:
+        "200":
+          description: OK
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.AccessToken'
+              type: object
+        "400":
+          description: Bad Request
+          schema:
+            allOf:
+            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
+            - properties:
+                data:
+                  $ref: '#/definitions/locpack-backend_internal_server_dto.AccessToken'
+              type: object
+      summary: User registration
+      tags:
+      - Auth
   /api/v1/packs:
     get:
       description: Get packs matching name or author
@@ -134,8 +218,6 @@ paths:
                     $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
                   type: array
               type: object
-      security:
-      - BearerAuth: []
       summary: Search packs by query
       tags:
       - Packs
@@ -200,8 +282,6 @@ paths:
                 data:
                   $ref: '#/definitions/locpack-backend_internal_server_dto.Pack'
               type: object
-      security:
-      - BearerAuth: []
       summary: Get pack by ID
       tags:
       - Packs
@@ -337,8 +417,6 @@ paths:
                     $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
                   type: array
               type: object
-      security:
-      - BearerAuth: []
       summary: Search places by query
       tags:
       - Places
@@ -372,7 +450,7 @@ paths:
               type: object
       security:
       - BearerAuth: []
-      summary: Create a new place
+      summary: Register a new place
       tags:
       - Places
   /api/v1/places/{id}:
@@ -403,8 +481,6 @@ paths:
                 data:
                   $ref: '#/definitions/locpack-backend_internal_server_dto.Place'
               type: object
-      security:
-      - BearerAuth: []
       summary: Get place by ID
       tags:
       - Places
@@ -477,42 +553,6 @@ paths:
       summary: Get user by ID
       tags:
       - Users
-    put:
-      description: Update user information
-      parameters:
-      - description: User ID
-        in: path
-        name: id
-        required: true
-        type: string
-      - description: User data
-        in: body
-        name: user
-        required: true
-        schema:
-          $ref: '#/definitions/locpack-backend_internal_server_dto.UserUpdate'
-      responses:
-        "200":
-          description: OK
-          schema:
-            allOf:
-            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
-              type: object
-        "400":
-          description: Bad Request
-          schema:
-            allOf:
-            - $ref: '#/definitions/locpack-backend_internal_server_dto.ResponseWrapper'
-            - properties:
-                data:
-                  $ref: '#/definitions/locpack-backend_internal_server_dto.User'
-              type: object
-      summary: Update user by ID
-      tags:
-      - Users
   /api/v1/users/my:
     get:
       description: Get information about the currently authenticated user
@@ -540,4 +580,9 @@ paths:
       summary: Get current user info
       tags:
       - Users
+securityDefinitions:
+  BearerAuth:
+    in: header
+    name: Authorization
+    type: apiKey
 swagger: "2.0"

@@ -24,5 +24,4 @@ type UserRepository interface {
 	GetByPublicID(id string) (entity.User, error)
 	GetByPublicIDFull(id string) (entity.User, error)
 	Create(u entity.User) error
-	Update(u entity.User) error
 }

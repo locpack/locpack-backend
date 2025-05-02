@@ -166,7 +166,7 @@ func TestPackController_PostPack(t *testing.T) {
 			userID:      "123",
 			requestBody: validInput,
 			mockSetup: func(s *service.MockPackService) {
-				s.On("Create", "123", mock.Anything).Return(model.Pack{}, errors.New("service error"))
+				s.On("Register", "123", mock.Anything).Return(model.Pack{}, errors.New("service error"))
 			},
 			expectedCode: http.StatusBadRequest,
 			expectedBody: dto.ResponseWrapper{
@@ -180,7 +180,7 @@ func TestPackController_PostPack(t *testing.T) {
 			userID:      "123",
 			requestBody: validInput,
 			mockSetup: func(s *service.MockPackService) {
-				s.On("Create", "123", mock.Anything).Return(model.Pack{Name: "Test Pack"}, nil)
+				s.On("Register", "123", mock.Anything).Return(model.Pack{Name: "Test Pack"}, nil)
 			},
 			expectedCode: http.StatusOK,
 			expectedBody: dto.ResponseWrapper{

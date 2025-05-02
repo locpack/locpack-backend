@@ -9,6 +9,7 @@ import (
 	"locpack-backend/internal/service/domain"
 	"locpack-backend/internal/storage/repository"
 	"locpack-backend/pkg/adapter/api"
+	"locpack-backend/pkg/adapter/auth"
 	"locpack-backend/pkg/adapter/database"
 )
 
@@ -18,6 +19,9 @@ import (
 // @contact.name Aleksey
 // @contact.email a.e.sokolkov@gmail.com
 // @host localhost:8080
+// @securityDefinitions.apikey BearerAuth
+// @in header
+// @name Authorization
 
 func main() {
 	var config cfg.Cfg
@@ -31,6 +35,8 @@ func main() {
 		panic(err)
 	}
 
+	auth := auth.New(&config.Auth)
+
 	placeRepository := repository.NewPlaceRepository(db)
 	packRepository := repository.NewPackRepository(db)
 	userRepository := repository.NewUserRepository(db)
@@ -38,19 +44,18 @@ func main() {
 	placeService := domain.NewPlaceService(placeRepository, userRepository)
 	packService := domain.NewPackService(packRepository, placeRepository, userRepository)
 	userService := domain.NewUserService(userRepository)
+	authService := domain.NewAuthService(auth, userRepository)
 
 	placeController := controller.NewPlaceController(placeService)
 	packController := controller.NewPackController(packService)
 	userController := controller.NewUserController(userService)
+	authController := controller.NewAuthController(authService)
 
-	a := api.New(&config.API)
+	server := api.New(&config.API)
 
-	router.NewPlaceRouter(a, placeController)
-	router.NewPackRouter(a, packController)
-	router.NewUserRouter(a, userController)
-	router.NewSwaggerRouter(a)
+	router.New(server, auth, packController, placeController, userController, authController)
 
-	err = a.Run(config.API.Address)
+	err = server.Run(config.API.Address)
 	if err != nil {
 		panic(err)
 	}

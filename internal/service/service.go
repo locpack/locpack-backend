@@ -1,6 +1,8 @@
 package service
 
-import "locpack-backend/internal/service/model"
+import (
+	"locpack-backend/internal/service/model"
+)
 
 type PlaceService interface {
 	GetByID(placeID string, userID string) (model.Place, error)
@@ -21,5 +23,10 @@ type PackService interface {
 
 type UserService interface {
 	GetByID(id string) (model.User, error)
-	UpdateByID(id string, uu model.UserUpdate) (model.User, error)
+}
+
+type AuthService interface {
+	Register(register model.Register) (model.AccessToken, error)
+	Login(login model.Login) (model.AccessToken, error)
+	Refresh(refresh model.Refresh) (model.AccessToken, error)
 }

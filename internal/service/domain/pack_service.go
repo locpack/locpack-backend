@@ -213,6 +213,10 @@ func (s *packServiceImpl) UpdateByID(packID string, userID string, pu model.Pack
 		return model.Pack{}, err
 	}
 
+	if packEntity.Author.ID != userEntity.ID {
+		return model.Pack{}, errors.New("user is not author")
+	}
+
 	packEntity.Name = pu.Name
 
 	if pu.Status == pack_status.Followed {

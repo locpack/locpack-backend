@@ -24,39 +24,27 @@ func NewPackController(service service.PackService) server.PackController {
 // @Summary Search packs by query
 // @Description Get packs matching name or author
 // @Tags Packs
-// @Security BearerAuth
 // @Param query query string true "Search query"
 // @Success 200 {object} dto.ResponseWrapper{data=[]dto.Pack}
 // @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Pack}
 // @Router /api/v1/packs [get]
 func (c *packControllerImpl) GetPacksByQuery(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
-		errors := []dto.Error{{Message: "Some error", Code: "000"}}
-		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
-			Meta:   dto.Meta{Success: false},
-			Errors: errors,
-		})
-		return
-	}
+	myUserID := ctx.GetString("myUserID")
 
 	query := ctx.Query("query")
 	if len(query) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	packs, err := c.service.GetByNameOrAuthor(query, userID)
+	packs, err := c.service.GetByNameOrAuthor(query, myUserID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -68,7 +56,6 @@ func (c *packControllerImpl) GetPacksByQuery(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -76,9 +63,8 @@ func (c *packControllerImpl) GetPacksByQuery(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   packsDTOs,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: packsDTOs,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
@@ -92,11 +78,10 @@ func (c *packControllerImpl) GetPacksByQuery(ctx adapter.APIContext) {
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.Pack}
 // @Router /api/v1/packs [post]
 func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
+	myUserID := ctx.GetString("myUserID")
+	if len(myUserID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -108,7 +93,6 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -120,18 +104,16 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	pack, err := c.service.Create(userID, packCreate)
+	pack, err := c.service.Create(myUserID, packCreate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -143,7 +125,6 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -151,9 +132,8 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   packDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: packDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
@@ -166,22 +146,20 @@ func (c *packControllerImpl) PostPack(ctx adapter.APIContext) {
 // @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Pack}
 // @Router /api/v1/packs/followed [get]
 func (c *packControllerImpl) GetPacksFollowed(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
+	myUserID := ctx.GetString("myUserID")
+	if len(myUserID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	packs, err := c.service.GetFollowedByUserID(userID)
+	packs, err := c.service.GetFollowedByUserID(myUserID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -193,7 +171,6 @@ func (c *packControllerImpl) GetPacksFollowed(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -201,9 +178,8 @@ func (c *packControllerImpl) GetPacksFollowed(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   packsDTOs,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: packsDTOs,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
@@ -216,22 +192,20 @@ func (c *packControllerImpl) GetPacksFollowed(ctx adapter.APIContext) {
 // @Failure 400 {object} dto.ResponseWrapper{data=[]dto.Pack}
 // @Router /api/v1/packs/created [get]
 func (c *packControllerImpl) GetPacksCreated(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
+	myUserID := ctx.GetString("myUserID")
+	if len(myUserID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	packs, err := c.service.GetCreatedByUserID(userID)
+	packs, err := c.service.GetCreatedByUserID(myUserID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -243,7 +217,6 @@ func (c *packControllerImpl) GetPacksCreated(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -251,9 +224,8 @@ func (c *packControllerImpl) GetPacksCreated(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   packsDTOs,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: packsDTOs,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
@@ -261,39 +233,27 @@ func (c *packControllerImpl) GetPacksCreated(ctx adapter.APIContext) {
 // @Summary Get pack by ID
 // @Description Get a specific pack by its ID
 // @Tags Packs
-// @Security BearerAuth
 // @Param id path string true "Pack ID"
 // @Success 200 {object} dto.ResponseWrapper{data=dto.Pack}
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.Pack}
 // @Router /api/v1/packs/{id} [get]
 func (c *packControllerImpl) GetPackByID(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
-		errors := []dto.Error{{Message: "Some error", Code: "000"}}
-		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
-			Meta:   dto.Meta{Success: false},
-			Errors: errors,
-		})
-		return
-	}
+	myUserID := ctx.GetString("myUserID")
 
 	packID := ctx.Param("id")
 	if len(packID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	pack, err := c.service.GetByID(packID, userID)
+	pack, err := c.service.GetByID(packID, myUserID)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -305,7 +265,6 @@ func (c *packControllerImpl) GetPackByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -313,9 +272,8 @@ func (c *packControllerImpl) GetPackByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   packDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: packDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }
 
@@ -330,11 +288,10 @@ func (c *packControllerImpl) GetPackByID(ctx adapter.APIContext) {
 // @Failure 400 {object} dto.ResponseWrapper{data=dto.Pack}
 // @Router /api/v1/packs/{id} [put]
 func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
-	userID := ctx.GetString("userID")
-	if len(userID) == 0 {
+	myUserID := ctx.GetString("myUserID")
+	if len(myUserID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -345,7 +302,6 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	if len(packID) == 0 {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -357,7 +313,6 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -369,18 +324,16 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
 		return
 	}
 
-	pack, err := c.service.UpdateByID(packID, userID, packUpdate)
+	pack, err := c.service.UpdateByID(packID, myUserID, packUpdate)
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -392,7 +345,6 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	if err != nil {
 		errors := []dto.Error{{Message: "Some error", Code: "000"}}
 		ctx.JSON(http.StatusBadRequest, dto.ResponseWrapper{
-			Data:   nil,
 			Meta:   dto.Meta{Success: false},
 			Errors: errors,
 		})
@@ -400,8 +352,7 @@ func (c *packControllerImpl) PutPackByID(ctx adapter.APIContext) {
 	}
 
 	ctx.JSON(http.StatusOK, dto.ResponseWrapper{
-		Data:   packDTO,
-		Meta:   dto.Meta{Success: true},
-		Errors: nil,
+		Data: packDTO,
+		Meta: dto.Meta{Success: true},
 	})
 }
