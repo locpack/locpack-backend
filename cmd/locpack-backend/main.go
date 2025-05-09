@@ -35,7 +35,7 @@ func main() {
 		panic(err)
 	}
 
-	auth := auth.New(&config.Auth)
+	authAdapter := auth.New(&config.Auth)
 
 	placeRepository := repository.NewPlaceRepository(db)
 	packRepository := repository.NewPackRepository(db)
@@ -44,7 +44,7 @@ func main() {
 	placeService := domain.NewPlaceService(placeRepository, userRepository)
 	packService := domain.NewPackService(packRepository, placeRepository, userRepository)
 	userService := domain.NewUserService(userRepository)
-	authService := domain.NewAuthService(auth, userRepository)
+	authService := domain.NewAuthService(authAdapter, userRepository)
 
 	placeController := controller.NewPlaceController(placeService)
 	packController := controller.NewPackController(packService)
@@ -53,7 +53,7 @@ func main() {
 
 	server := api.New(&config.API)
 
-	router.New(server, auth, packController, placeController, userController, authController)
+	router.New(server, authAdapter, packController, placeController, userController, authController)
 
 	err = server.Run(config.API.Address)
 	if err != nil {

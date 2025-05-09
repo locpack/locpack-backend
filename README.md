@@ -1,19 +1,19 @@
 # locpack-backend
 
-swag init -output ./docs/swagger -g ./cmd/locpack-backend/main.go --parseDependency
-docusaurus
+## Swagger
 
-## Tests
+1. Generate OpenAPI schema.
+    ```bash
+   swag init -output ./docs/swagger -g ./cmd/locpack-backend/main.go --parseDependency
+    ```
 
-### Prerequisites
+## Testing
 
-- [Mockery](https://github.com/vektra/mockery)
-
-To launch tests you need to generate mocks first with mockery command.
-```bash
-mockery
-```
-As soon as mocks generated you can run tests itself.
-```bash
-go test -cover ./...
-```
+1. Initialize mocks.
+    ```bash
+    mockery
+    ```
+2. Run tests.
+    ```bash
+    go test -cover ./...
+    ```
