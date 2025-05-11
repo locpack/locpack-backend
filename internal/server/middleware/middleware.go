@@ -8,6 +8,20 @@ import (
 	"locpack-backend/pkg/adapter"
 )
 
+func AnyAuthenticatedMiddleware(auth adapter.Auth) adapter.APIHandler {
+	return func(ctx adapter.APIContext) {
+		authHeader := ctx.GetHeader("Authorization")
+		if authHeader != "" {
+			accessToken := strings.TrimPrefix(authHeader, "Bearer ")
+			token, err := auth.DecodeToken(accessToken)
+			if err == nil && token.Valid {
+				ctx.Set("myUserID", token.Username)
+			}
+		}
+		ctx.Next()
+	}
+}
+
 func AuthenticatedMiddleware(auth adapter.Auth) adapter.APIHandler {
 	return func(ctx adapter.APIContext) {
 		authHeader := ctx.GetHeader("Authorization")
@@ -24,15 +38,6 @@ func AuthenticatedMiddleware(auth adapter.Auth) adapter.APIHandler {
 
 		token, err := auth.DecodeToken(accessToken)
 		if err != nil || !token.Valid {
-			errors := []dto.Error{{Message: "Some error", Code: "000"}}
-			ctx.JSON(http.StatusUnauthorized, dto.ResponseWrapper{
-				Meta:   dto.Meta{Success: false},
-				Errors: errors,
-			})
-			return
-		}
-
-		if err != nil {
 			errors := []dto.Error{{Message: "Some error", Code: "000"}}
 			ctx.JSON(http.StatusUnauthorized, dto.ResponseWrapper{
 				Meta:   dto.Meta{Success: false},

@@ -16,7 +16,7 @@ type Refresh struct {
 }
 
 type AccessToken struct {
-	Value        string
-	RefreshToken string
-	ExpiresIn    float64
+	Value        string  `json:"value"`
+	RefreshToken string  `json:"refresh_token"`
+	ExpiresIn    float64 `json:"expires_in"`
 }

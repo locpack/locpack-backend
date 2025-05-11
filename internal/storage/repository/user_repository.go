@@ -22,7 +22,12 @@ func (r *userRepoImpl) GetByPublicID(id string) (entity.User, error) {
 
 func (r *userRepoImpl) GetByPublicIDFull(id string) (entity.User, error) {
 	var u entity.User
-	result := r.db.Preload("FollowedPacks").Preload("CreatedPacks").First(&u, "lower(public_id) = lower(?)", id)
+	result := r.db.
+		Preload("FollowedPacks").
+		Preload("FollowedPacks.Author").
+		Preload("CreatedPacks").
+		Preload("CreatedPacks.Author").
+		First(&u, "lower(public_id) = lower(?)", id)
 	return u, result.Error
 }
 

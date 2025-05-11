@@ -3,11 +3,11 @@ package model
 import "locpack-backend/pkg/types"
 
 type Pack struct {
-	ID             string `copier:"PublicID"`
-	Name           string
-	AuthorID       string
-	AuthorUsername string
-	Status         types.PackStatus
+	ID     string
+	Name   string
+	Author User
+	Status types.PackStatus
+	Places []Place
 }
 
 type PackCreate struct {

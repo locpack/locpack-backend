@@ -16,6 +16,7 @@ func New(
 	authController server.AuthController,
 ) {
 	public := api.Group("")
+	public.Use(middleware.AnyAuthenticatedMiddleware(authAdapter))
 	{
 		public.GET("/api/v1/packs", packController.GetPacksByQuery)
 		public.GET("/api/v1/packs/:id", packController.GetPackByID)

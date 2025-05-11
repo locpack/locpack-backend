@@ -16,13 +16,18 @@ func NewPackRepository(db adapter.Database) storage.PackRepository {
 
 func (r *packRepoImpl) GetByPublicIDFull(id string) (entity.Pack, error) {
 	var p entity.Pack
-	result := r.db.Preload("FollowedUsers").First(&p, "public_id = ?", id)
+	result := r.db.Preload("FollowedUsers").Preload("Author").First(&p, "public_id = ?", id)
 	return p, result.Error
 }
 
 func (r *packRepoImpl) GetByNameOrAuthorFull(query string) ([]entity.Pack, error) {
 	var p []entity.Pack
-	result := r.db.Preload("FollowedUsers").Find(&p, "lower(name) LIKE lower(?) OR lower(author_id) LIKE lower(?)", "%"+query+"%", "%"+query+"%")
+	result := r.db.
+		Joins("JOIN users ON users.id = packs.author_id").
+		Preload("FollowedUsers").
+		Preload("Author").
+		Where("LOWER(packs.name) LIKE LOWER(?) OR LOWER(packs.public_id) LIKE LOWER(?) OR LOWER(users.public_id) LIKE LOWER(?)", "%"+query+"%", "%"+query+"%", "%"+query+"%").
+		Find(&p)
 	return p, result.Error
 }
 

@@ -16,7 +16,6 @@ type PackService interface {
 	GetByNameOrAuthor(query string, userID string) ([]model.Pack, error)
 	GetFollowedByUserID(userID string) ([]model.Pack, error)
 	GetCreatedByUserID(userID string) ([]model.Pack, error)
-	GetPlacesByID(packID string, userID string) ([]model.Place, error)
 	Create(userID string, pc model.PackCreate) (model.Pack, error)
 	UpdateByID(packID string, userID string, pu model.PackUpdate) (model.Pack, error)
 }
